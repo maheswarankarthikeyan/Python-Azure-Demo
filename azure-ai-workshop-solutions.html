@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure AI Workshop - Comprehensive Solution Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        
+        /* Header with Great Learning Branding */
+        .gl-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .gl-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .gl-logo svg { height: 50px; }
+        .gl-badge {
+            background: linear-gradient(135deg, #1E88E5 0%, #0D47A1 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .main-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            position: relative;
+        }
+        .main-header h1 { font-size: 2.2rem; margin-bottom: 15px; color: white; }
+        .main-header p { font-size: 1.1rem; color: rgba(255,255,255,0.9); max-width: 800px; margin: 0 auto; }
+        .header-badges { margin-top: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .header-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            color: white;
+        }
+        
+        /* Navigation */
+        .nav-container {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        .nav-tabs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .nav-tab {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.1);
+            color: #ccc;
+        }
+        .nav-tab:hover { background: rgba(255,255,255,0.2); }
+        .nav-tab.active { background: #667eea; color: white; }
+        
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        
+        /* Section Styling */
+        .section-box {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%);
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 30px;
+        }
+        .section-box h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(102,126,234,0.3);
+        }
+        .section-box h3 {
+            color: #a78bfa;
+            margin: 30px 0 20px;
+            font-size: 1.3rem;
+        }
+        .section-box h4 {
+            color: #00bcf2;
+            margin: 25px 0 15px;
+            font-size: 1.1rem;
+        }
+        
+        /* Narrative Text */
+        .narrative {
+            background: rgba(0,0,0,0.2);
+            border-left: 4px solid #667eea;
+            padding: 20px 25px;
+            margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+            font-size: 0.95rem;
+            line-height: 1.9;
+        }
+        .narrative strong { color: #a78bfa; }
+        .narrative em { color: #00bcf2; font-style: normal; }
+        
+        /* Experience Box */
+        .experience-box {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.05) 100%);
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .experience-box h5 {
+            color: #10b981;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .experience-box h5::before { content: "💡"; }
+        
+        /* Reasoning Box */
+        .reasoning-box {
+            background: linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(217,119,6,0.05) 100%);
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .reasoning-box h5 {
+            color: #f59e0b;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .reasoning-box h5::before { content: "🧠"; }
+        
+        /* CAF Alignment Box */
+        .caf-box {
+            background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(37,99,235,0.05) 100%);
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .caf-box h5 {
+            color: #3b82f6;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .caf-box h5::before { content: "📘"; }
+        
+        /* Detailed Table */
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+        .detail-table th {
+            background: rgba(102,126,234,0.2);
+            padding: 15px;
+            text-align: left;
+            color: #a78bfa;
+            font-weight: 600;
+        }
+        .detail-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            vertical-align: top;
+            line-height: 1.7;
+        }
+        .detail-table tr:hover td { background: rgba(255,255,255,0.03); }
+        
+        /* Step Cards */
+        .step-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        .step-card .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .step-card .step-num {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .step-card .step-title { font-size: 1.2rem; color: #a78bfa; }
+        
+        /* Checklist */
+        .checklist { list-style: none; margin: 15px 0; }
+        .checklist li {
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.2);
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            line-height: 1.6;
+        }
+        .checklist li::before { content: "✓"; color: #10b981; font-weight: bold; }
+        
+        /* MS Link */
+        .ms-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #58a6ff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 10px 16px;
+            background: rgba(88,166,255,0.1);
+            border-radius: 8px;
+            margin: 10px 5px 10px 0;
+            transition: all 0.2s ease;
+        }
+        .ms-link:hover { background: rgba(88,166,255,0.2); }
+        
+        /* Quote Box */
+        .quote-box {
+            background: rgba(102,126,234,0.1);
+            border-left: 4px solid #667eea;
+            padding: 20px 25px;
+            margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+            font-style: italic;
+            color: #ccc;
+        }
+        .quote-box cite {
+            display: block;
+            margin-top: 10px;
+            font-style: normal;
+            color: #888;
+            font-size: 0.85rem;
+        }
+        
+        /* Workshop Tabs */
+        .workshop-tabs { display: flex; gap: 15px; margin: 30px 0; flex-wrap: wrap; }
+        .tab-btn {
+            flex: 1;
+            min-width: 250px;
+            padding: 25px;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.healthcare { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+        .tab-btn.banking { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+        .tab-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+        .tab-btn.active { box-shadow: 0 0 0 4px white; }
+        .tab-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+        
+        .workshop-content { display: none; }
+        .workshop-content.active { display: block; }
+        
+        /* Architecture */
+        .arch-box {
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 25px 0;
+        }
+        .arch-box h4 { color: #58a6ff; margin-bottom: 20px; }
+        .arch-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 20px 0;
+        }
+        .arch-node {
+            background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+            color: white;
+            padding: 18px 22px;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 130px;
+            font-size: 0.9rem;
+        }
+        .arch-arrow { color: #58a6ff; font-size: 1.8rem; }
+        
+        /* Cost Table */
+        .cost-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+        .cost-table th {
+            background: rgba(16,185,129,0.2);
+            padding: 15px;
+            text-align: left;
+            color: #10b981;
+        }
+        .cost-table td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .cost-table .total { background: rgba(16,185,129,0.1); font-weight: 600; }
+        
+        /* Footer */
+        .gl-footer {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 2px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        .gl-footer-logo { margin-bottom: 25px; }
+        .gl-copyright {
+            background: rgba(0,0,0,0.3);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .gl-copyright p { color: #888; font-size: 0.9rem; }
+        .gl-copyright strong { color: #ccc; }
+        
+        @media (max-width: 768px) {
+            .main-header h1 { font-size: 1.6rem; }
+            .arch-flow { flex-direction: column; }
+            .arch-arrow { transform: rotate(90deg); }
+            .gl-header { flex-direction: column; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- Great Learning Header -->
+        <div class="gl-header">
+            <div class="gl-logo">
+                <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 10 C8 10, 2 22, 2 32 C2 45, 10 52, 22 52 C30 52, 36 48, 38 40 L26 40 L26 34 L46 34 L46 42 C42 54, 32 60, 20 60 C4 60, -6 46, -6 32 C-6 18, 6 4, 22 4 C34 4, 42 10, 44 18 L34 22 C32 18, 28 14, 22 14 C12 14, 6 22, 6 32 C6 42, 12 50, 22 50 C30 50, 34 46, 36 40 L26 40 L26 34" fill="#1E88E5" transform="translate(5,0)"/>
+                    <text x="55" y="28" font-family="Segoe UI" font-size="18" font-weight="600" fill="#1E88E5">Great</text>
+                    <text x="55" y="48" font-family="Segoe UI" font-size="18" font-weight="600" fill="#0D47A1">Learning</text>
+                </svg>
+                <span style="color: #666; font-size: 0.75rem; letter-spacing: 2px;">POWER AHEAD</span>
+            </div>
+            <div class="gl-badge">Principal Azure AI Architect Workshop</div>
+        </div>
+        
+        <!-- Main Header -->
+        <div class="main-header">
+            <h1>Azure AI Workshop - Comprehensive Solution Guide</h1>
+            <p>A detailed, experience-driven approach to translating business problems into Azure AI solutions, fully aligned with Microsoft Cloud Adoption Framework (CAF) for AI</p>
+            <div class="header-badges">
+                <span class="header-badge">📘 CAF AI Strategy Aligned</span>
+                <span class="header-badge">🏗️ Well-Architected Framework</span>
+                <span class="header-badge">💡 Best Practices Approach</span>
+                <span class="header-badge">🔒 Enterprise Compliance Ready</span>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="nav-container">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showSection('approach')">🎯 Methodology & Approach</button>
+                <button class="nav-tab" onclick="showSection('caf')">📘 CAF AI Strategy Alignment</button>
+                <button class="nav-tab" onclick="showSection('discovery')">🔍 Client Discovery Framework</button>
+                <button class="nav-tab" onclick="showSection('solutions')">🔧 Detailed Solutions</button>
+                <button class="nav-tab" onclick="showSection('cost')">💰 Cost & Well-Architected</button>
+            </div>
+        </div>
+
+        <!-- ==================== SECTION 1: METHODOLOGY & APPROACH ==================== -->
+        <div id="approach" class="content-section active">
+            
+            <div class="section-box">
+                <h2>🎯 Workshop Methodology: Best Practices, Practical, Documentation-Backed</h2>
+                
+                <div class="narrative">
+                    <p>This workshop follows <strong>industry best practices and Microsoft's recommended patterns</strong> for enterprise AI implementations across healthcare, banking, and financial services. The recommendations, architecture patterns, and Azure service selections are based on <em>proven approaches documented in Microsoft's Cloud Adoption Framework</em> and validated through real-world deployments.</p>
+                    <p style="margin-top: 15px;">The fundamental principle guiding this methodology: <strong>"Start with the business problem, not the technology."</strong> Research shows that AI projects often fail when teams jump to solutions before understanding the problem. This structured approach ensures the right solution is built for the right problem.</p>
+                </div>
+                
+                <h3>The Three Pillars of Our Methodology</h3>
+                
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-num">1</div>
+                        <div class="step-title">Industry Best Practices</div>
+                    </div>
+                    <div class="narrative">
+                        <p><strong>Principle:</strong> Architecture patterns recommended in this workshop are based on Microsoft's documented best practices and industry-validated approaches for regulated industries.</p>
+                        <p style="margin-top: 10px;"><strong>Example:</strong> RAG (Retrieval-Augmented Generation) is recommended for clinical note summarization because fine-tuned models present challenges in healthcare environments:</p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>Inability to cite sources (audit requirement for HIPAA)</li>
+                            <li>Risk of hallucinations about patient data (unacceptable in clinical settings)</li>
+                            <li>Expensive retraining when medical terminology evolves</li>
+                        </ul>
+                        <p style="margin-top: 10px;">RAG addresses these challenges: it grounds responses in actual patient notes, provides citations for audit trails, and requires no model retraining.</p>
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-num">2</div>
+                        <div class="step-title">Practical Implementation Focus</div>
+                    </div>
+                    <div class="narrative">
+                        <p><strong>Principle:</strong> This workshop provides specific configurations, code samples, and Azure service settings that can be directly applied to real implementations.</p>
+                        <p style="margin-top: 10px;"><strong>Example:</strong> Rather than generic guidance like "use Azure OpenAI," specific configurations are provided:</p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><em>Model:</em> GPT-4 Turbo (1106-preview) — 128K context for long clinical histories</li>
+                            <li><em>Region:</em> East US — HIPAA BAA eligible, optimized latency for East Coast deployments</li>
+                            <li><em>TPM:</em> 80,000 tokens/minute — sized for 50 concurrent users</li>
+                            <li><em>Temperature:</em> 0.3 — balanced for factual accuracy and readable output</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-num">3</div>
+                        <div class="step-title">Documentation-Backed Recommendations</div>
+                    </div>
+                    <div class="narrative">
+                        <p><strong>Principle:</strong> All technical recommendations are aligned with current Microsoft documentation. Direct links to official documentation are provided throughout for reference and deeper exploration.</p>
+                        <p style="margin-top: 10px;"><strong>Why this matters:</strong> Azure AI services evolve rapidly. GPT-4 Turbo was introduced recently, and Document Intelligence pre-built models expand quarterly. The documentation links enable participants to:</p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>Verify recommendations against official sources</li>
+                            <li>Explore topics in greater depth</li>
+                            <li>Stay current as services evolve</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h3>Why This Approach Works</h3>
+                
+                <div class="experience-box">
+                    <h5>Common AI Project Pitfalls & How to Avoid Them</h5>
+                    <p>Industry research and case studies show that AI projects often fail for predictable reasons. This methodology is designed to address these common pitfalls:</p>
+                    <table class="detail-table" style="margin-top: 15px;">
+                        <tr>
+                            <th>Common Failure Mode</th>
+                            <th>How This Methodology Addresses It</th>
+                        </tr>
+                        <tr>
+                            <td><strong>"Solution looking for a problem"</strong><br>Team builds AI capability without clear business need</td>
+                            <td>Problem Discovery phase requires quantified business impact before any technology discussion. If you can't measure the problem, you can't solve it.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>"Data access surprise"</strong><br>Project stalls at Week 4 because data isn't accessible</td>
+                            <td>Scenario briefs explicitly document data sources, formats, and access timelines. This helps identify data blockers in Week 1, not Week 4.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>"Compliance veto"</strong><br>Privacy/Legal kills project after significant investment</td>
+                            <td>Stakeholder mapping includes Privacy Officer and Compliance from Day 1. Hard constraints (HIPAA, PCI-DSS) are documented before architecture begins.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>"Over-promised, under-delivered"</strong><br>AI accuracy or latency doesn't meet expectations</td>
+                            <td>Realistic expectations are set upfront: Azure OpenAI takes 2-5 seconds (not sub-second), Document Intelligence is 95-98% accurate (not 100%). Human review is always part of the design.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>"Integration nightmare"</strong><br>AI works in isolation but can't connect to existing systems</td>
+                            <td>Requirements Mapping explicitly captures integration points. The recommendation is to start with standalone dashboards when legacy systems (like 15-year-old core banking) lack APIs.</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <h3>The Workshop Flow</h3>
+                
+                <div class="narrative">
+                    <p>Our 60-minute workshop follows a structured flow that mirrors how successful AI projects actually unfold:</p>
+                </div>
+                
+                <div class="arch-box">
+                    <h4>Workshop Flow: Problem → Solution</h4>
+                    <div class="arch-flow">
+                        <div class="arch-node" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                            <strong>Problem Discovery</strong><br><small>15 min</small><br><small>What's broken?</small>
+                        </div>
+                        <span class="arch-arrow">→</span>
+                        <div class="arch-node" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                            <strong>Use Case Prioritization</strong><br><small>15 min</small><br><small>What to fix first?</small>
+                        </div>
+                        <span class="arch-arrow">→</span>
+                        <div class="arch-node" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                            <strong>Requirements Mapping</strong><br><small>20 min</small><br><small>Input → Output</small>
+                        </div>
+                        <span class="arch-arrow">→</span>
+                        <div class="arch-node">
+                            <strong>Azure Service Mapping</strong><br><small>10 min</small><br><small>Technology selection</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="reasoning-box">
+                    <h5>Why This Order Matters</h5>
+                    <p><strong>Problem before solution:</strong> The workshop dedicates 30 minutes (50% of the time) to problem understanding before discussing technology. This is intentional — rushing to technology selection without understanding the problem often leads to building solutions that don't address the actual need.</p>
+                    <p style="margin-top: 10px;"><strong>Prioritization before requirements:</strong> Most organizations have 10+ potential AI use cases. Attempting to address all of them simultaneously reduces the likelihood of success. The Value × Feasibility matrix helps identify the use case most likely to succeed.</p>
+                    <p style="margin-top: 10px;"><strong>Constraints before services:</strong> Azure offers 200+ services. Without understanding constraints (latency, security, compliance, explainability), informed technology choices cannot be made. A 5-second latency requirement eliminates batch processing options. A HIPAA requirement limits deployment to BAA-eligible regions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SECTION 2: CAF AI STRATEGY ALIGNMENT ==================== -->
+        <div id="caf" class="content-section">
+            
+            <div class="section-box">
+                <h2>📘 Microsoft Cloud Adoption Framework (CAF) for AI - Deep Alignment</h2>
+                
+                <div class="narrative">
+                    <p>This workshop methodology is built on the foundation of Microsoft's <strong>Cloud Adoption Framework (CAF) for AI</strong>. Every workshop element is designed to follow CAF principles and recommendations.</p>
+                    <p style="margin-top: 15px;">The CAF AI Strategy (<a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/strategy" target="_blank" style="color: #58a6ff;">official documentation</a>) provides a structured approach to AI adoption. Below is a detailed mapping of how this workshop implements each CAF recommendation.</p>
+                </div>
+                
+                <div class="quote-box">
+                    <p>"The most successful AI implementations start with a clear understanding of business outcomes, not technology capabilities. Organizations should identify specific use cases where AI can deliver measurable value, then work backward to determine the required capabilities."</p>
+                    <cite>— Microsoft Cloud Adoption Framework for AI, Strategy Phase</cite>
+                </div>
+                
+                <h3>CAF AI Strategy: Example AI Strategy Alignment</h3>
+                
+                <div class="caf-box">
+                    <h5>CAF Guidance: "Define AI Vision and Business Outcomes"</h5>
+                    <p>The CAF recommends starting with a clear AI vision tied to business outcomes, not technology exploration. Organizations should ask: "What business problem are we solving?" before "What AI technology should we use?"</p>
+                    
+                    <div class="narrative" style="margin-top: 15px;">
+                        <p><strong>How This Workshop Implements This:</strong></p>
+                        <p>The Problem Discovery phase (first 15 minutes) is entirely focused on business outcomes. Five specific questions are designed to quantify the business problem:</p>
+                        <ol style="margin: 10px 0 0 20px;">
+                            <li><em>"What specific task takes too long today?"</em> — Identifies the pain point</li>
+                            <li><em>"Who is impacted most?"</em> — Defines the primary user</li>
+                            <li><em>"How much time does this consume daily?"</em> — Quantifies the opportunity</li>
+                            <li><em>"What happens if this isn't fixed?"</em> — Establishes urgency</li>
+                            <li><em>"What does success look like in 3 months?"</em> — Sets measurable targets</li>
+                        </ol>
+                        <p style="margin-top: 15px;"><strong>Evidence from our solutions:</strong></p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><em>Healthcare:</em> "Clinicians spend 4-5 hours/day reviewing notes" → measurable outcome: reduce to 2 hours/day</li>
+                            <li><em>Banking:</em> "7-10 day loan approval cycle" → measurable outcome: reduce to 3-5 days</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="caf-box">
+                    <h5>CAF Guidance: "Identify and Prioritize AI Use Cases"</h5>
+                    <p>The CAF recommends creating a portfolio of AI use cases and prioritizing based on business value and technical feasibility. Not all use cases are equal — some deliver quick wins, others require significant investment.</p>
+                    
+                    <div class="narrative" style="margin-top: 15px;">
+                        <p><strong>How Our Workshop Implements This:</strong></p>
+                        <p>Our Use Case Prioritization phase uses a simple but effective <strong>Value × Feasibility matrix</strong>. Each use case is scored 1-10 on two dimensions:</p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><strong>Business Value:</strong> How much time/money/risk does this save?</li>
+                            <li><strong>Feasibility:</strong> Do we have data? Can we start read-only? Is there human review?</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Evidence from our solutions:</strong></p>
+                        <table class="detail-table" style="margin-top: 10px;">
+                            <tr>
+                                <th>Use Case</th>
+                                <th>Value</th>
+                                <th>Feasibility</th>
+                                <th>Score</th>
+                                <th>Why This Score</th>
+                            </tr>
+                            <tr>
+                                <td>Clinical note summarization</td>
+                                <td>9</td>
+                                <td>8</td>
+                                <td><strong>72</strong></td>
+                                <td>Direct time savings, data available, read-only, human reviews</td>
+                            </tr>
+                            <tr>
+                                <td>Patient triage recommendation</td>
+                                <td>8</td>
+                                <td>4</td>
+                                <td>32</td>
+                                <td>High value but safety-critical, needs explainability, liability concerns</td>
+                            </tr>
+                            <tr>
+                                <td>Document extraction (Banking)</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td><strong>81</strong></td>
+                                <td>Biggest bottleneck, proven Azure tech, underwriter still reviews</td>
+                            </tr>
+                            <tr>
+                                <td>AI risk scoring (Banking)</td>
+                                <td>8</td>
+                                <td>5</td>
+                                <td>40</td>
+                                <td>High value but needs bias testing, fair lending compliance</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="caf-box">
+                    <h5>CAF Guidance: "Assess Organizational Readiness"</h5>
+                    <p>The CAF emphasizes assessing data readiness, skill gaps, and organizational change management before starting AI projects. Many AI initiatives fail not due to technology but due to organizational unpreparedness.</p>
+                    
+                    <div class="narrative" style="margin-top: 15px;">
+                        <p><strong>How Our Workshop Implements This:</strong></p>
+                        <p>Our Scenario Briefs include detailed organizational context:</p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><strong>Data Readiness:</strong> Where does data live? What format? Can we access it? Timeline for export?</li>
+                            <li><strong>Stakeholder Mapping:</strong> Who are the sponsors, blockers, and end users? Who has budget authority?</li>
+                            <li><strong>Skill Assessment:</strong> Does IT have Azure experience? Who can build EMR integrations?</li>
+                            <li><strong>Change Management:</strong> Will clinicians/underwriters adopt this? What training is needed?</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Evidence from our solutions:</strong></p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><em>Healthcare:</em> "Epic Admin (Lisa Wong) can build EMR sidebar" — we identified the person who can do the integration</li>
+                            <li><em>Banking:</em> "FIS Horizon is 15 years old with limited APIs" — we identified the integration blocker and designed around it (standalone dashboard first)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="caf-box">
+                    <h5>CAF Guidance: "Define Success Metrics and KPIs"</h5>
+                    <p>The CAF recommends defining clear, measurable success criteria before implementation. "If you can't measure it, you can't improve it."</p>
+                    
+                    <div class="narrative" style="margin-top: 15px;">
+                        <p><strong>How Our Workshop Implements This:</strong></p>
+                        <p>Every workshop output includes specific, measurable KPIs agreed with stakeholders:</p>
+                        <table class="detail-table" style="margin-top: 10px;">
+                            <tr>
+                                <th>Solution</th>
+                                <th>KPI</th>
+                                <th>Current State</th>
+                                <th>Target State</th>
+                                <th>How We'll Measure</th>
+                            </tr>
+                            <tr>
+                                <td>Healthcare</td>
+                                <td>Note review time</td>
+                                <td>8-12 min/patient</td>
+                                <td>4-5 min/patient</td>
+                                <td>Time-motion study with pilot clinicians</td>
+                            </tr>
+                            <tr>
+                                <td>Healthcare</td>
+                                <td>Response latency</td>
+                                <td>N/A (manual)</td>
+                                <td><5 seconds</td>
+                                <td>Azure Monitor P95 latency</td>
+                            </tr>
+                            <tr>
+                                <td>Healthcare</td>
+                                <td>Clinician satisfaction</td>
+                                <td>Baseline survey</td>
+                                <td>95% find summaries useful</td>
+                                <td>Post-pilot survey</td>
+                            </tr>
+                            <tr>
+                                <td>Banking</td>
+                                <td>Data entry time</td>
+                                <td>45-60 min/app</td>
+                                <td>10-15 min/app</td>
+                                <td>Time tracking in dashboard</td>
+                            </tr>
+                            <tr>
+                                <td>Banking</td>
+                                <td>Extraction accuracy</td>
+                                <td>N/A (manual)</td>
+                                <td>95%+ on key fields</td>
+                                <td>Comparison to manual extraction on 100 docs</td>
+                            </tr>
+                            <tr>
+                                <td>Banking</td>
+                                <td>Approval cycle time</td>
+                                <td>7-10 days</td>
+                                <td>3-5 days</td>
+                                <td>Loan origination system timestamps</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="caf-box">
+                    <h5>CAF Guidance: "Start Small, Prove Value, Scale"</h5>
+                    <p>The CAF recommends a phased approach: start with a proof-of-concept, validate with a pilot, then scale. This reduces risk and builds organizational confidence.</p>
+                    
+                    <div class="narrative" style="margin-top: 15px;">
+                        <p><strong>How Our Workshop Implements This:</strong></p>
+                        <p>Our implementation timeline follows the CAF-recommended phased approach:</p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><strong>Week 1-2 (Foundation):</strong> Azure environment setup, get sample data (50-100 records)</li>
+                            <li><strong>Week 3-4 (POC):</strong> Build core AI pipeline, validate with 2-3 users</li>
+                            <li><strong>Week 5-6 (Integration):</strong> Connect to existing systems, build user interface</li>
+                            <li><strong>Week 7-8 (Pilot):</strong> Deploy to limited user group (52 ED physicians, not all 320)</li>
+                            <li><strong>Week 9+ (Scale):</strong> Based on pilot results, expand or iterate</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Why this matters:</strong> A $200K POC that fails provides valuable learning. A $2M full deployment that fails is a significant setback. This approach is designed for fast learning with limited risk.</p>
+                    </div>
+                </div>
+                
+                <h3>CAF AI Strategy: Six Pillars Alignment</h3>
+                
+                <div class="narrative">
+                    <p>The CAF defines six phases for cloud adoption: Strategy, Plan, Ready, Adopt, Govern, and Manage. Our workshop addresses all six:</p>
+                </div>
+                
+                <table class="detail-table">
+                    <tr>
+                        <th>CAF Phase</th>
+                        <th>CAF Guidance</th>
+                        <th>Our Workshop Implementation</th>
+                        <th>Evidence</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Strategy</strong></td>
+                        <td>Define business outcomes, identify use cases, build business case</td>
+                        <td>Problem Discovery + Use Case Prioritization phases</td>
+                        <td>Quantified ROI: Healthcare 92x, Banking 50x</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Plan</strong></td>
+                        <td>Assess readiness, identify skills, create roadmap</td>
+                        <td>Scenario Briefs with stakeholder mapping, 8-week timeline</td>
+                        <td>Named stakeholders, data access timelines, skill identification</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ready</strong></td>
+                        <td>Prepare Azure environment, landing zones, security</td>
+                        <td>Azure Service Mapping with security/compliance requirements</td>
+                        <td>Private endpoints, CMK encryption, RBAC configuration</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Adopt</strong></td>
+                        <td>Implement AI solutions using proven patterns</td>
+                        <td>Detailed architecture with RAG pattern, Document Intelligence</td>
+                        <td>Working code samples, specific configurations</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Govern</strong></td>
+                        <td>Establish policies, ensure compliance</td>
+                        <td>Compliance checklists (HIPAA, PCI-DSS), audit logging</td>
+                        <td>7-year retention, BAA requirements, fair lending warnings</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Manage</strong></td>
+                        <td>Monitor, optimize, continuously improve</td>
+                        <td>Azure Monitor configuration, cost optimization strategies</td>
+                        <td>Latency alerts, cost estimates, optimization recommendations</td>
+                    </tr>
+                </table>
+                
+                <div style="margin-top: 25px;">
+                    <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/strategy" target="_blank" class="ms-link">📘 CAF AI Strategy Documentation</a>
+                    <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/strategy#example-ai-strategy" target="_blank" class="ms-link">📘 CAF Example AI Strategy</a>
+                    <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/" target="_blank" class="ms-link">📘 CAF AI Scenario Overview</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SECTION 3: CLIENT DISCOVERY FRAMEWORK ==================== -->
+        <div id="discovery" class="content-section">
+            
+            <div class="section-box">
+                <h2>🔍 Client Discovery & Solution Mapping Framework</h2>
+                
+                <div class="narrative">
+                    <p>This section details how the workshop implements the <strong>Client Discovery & Solution Mapping</strong> framework. This framework bridges business problems and Azure AI solutions — translating "clinicians are overwhelmed" into "deploy Azure OpenAI with RAG pattern."</p>
+                </div>
+                
+                <div class="quote-box">
+                    <p>The Client Discovery framework has four core objectives:</p>
+                    <ol style="margin: 10px 0 0 20px;">
+                        <li>Frameworks for translating client problems into AI system designs using Azure</li>
+                        <li>Requirements gathering from business and technical stakeholders</li>
+                        <li>Structuring AI use cases across BFSI, healthcare, customer support</li>
+                        <li>Scoping constraints: latency, security, compliance, explainability</li>
+                    </ol>
+                    <cite>— Workshop Learning Objectives</cite>
+                </div>
+                
+                <h3>Objective 1: Translating Client Problems into AI System Designs</h3>
+                
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-num">1</div>
+                        <div class="step-title">The Translation Framework</div>
+                    </div>
+                    
+                    <div class="narrative">
+                        <p><strong>The Challenge:</strong> Clients describe problems in business language ("our loan process is too slow"). AI architects think in technical language ("document extraction with OCR is needed"). The translation framework bridges this gap.</p>
+                    </div>
+                    
+                    <div class="experience-box">
+                        <h5>Translation Methodology</h5>
+                        <p>A structured approach is used to translate business problems into AI system designs:</p>
+                        <table class="detail-table" style="margin-top: 15px;">
+                            <tr>
+                                <th>Step</th>
+                                <th>Business Language</th>
+                                <th>Translation Process</th>
+                                <th>Technical Design</th>
+                            </tr>
+                            <tr>
+                                <td><strong>1. Identify Pain</strong></td>
+                                <td>"Clinicians spend too much time reading notes"</td>
+                                <td>What task? → Reading unstructured text<br>What output? → Understanding patient history</td>
+                                <td>Text summarization task</td>
+                            </tr>
+                            <tr>
+                                <td><strong>2. Quantify Scale</strong></td>
+                                <td>"It affects all our doctors"</td>
+                                <td>How many users? → 80 clinicians<br>How many requests? → 25-30 patients/day each</td>
+                                <td>~2,000 requests/day, need scalable solution</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3. Define Input</strong></td>
+                                <td>"They read notes from Epic"</td>
+                                <td>What format? → Unstructured text<br>What source? → Epic EMR via API or export</td>
+                                <td>Text input, need EMR integration or batch export</td>
+                            </tr>
+                            <tr>
+                                <td><strong>4. Define Output</strong></td>
+                                <td>"They need to quickly understand the patient"</td>
+                                <td>What format? → Structured summary<br>Where displayed? → In Epic workflow</td>
+                                <td>Structured JSON → EMR sidebar display</td>
+                            </tr>
+                            <tr>
+                                <td><strong>5. Map to Azure</strong></td>
+                                <td>N/A</td>
+                                <td>Text summarization + search + compliance</td>
+                                <td>Azure OpenAI + AI Search + private endpoints</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="reasoning-box">
+                        <h5>Why This Translation Matters</h5>
+                        <p><strong>Without translation:</strong> Teams build what they think the client wants. A technically impressive solution that doesn't solve the actual problem.</p>
+                        <p style="margin-top: 10px;"><strong>With translation:</strong> Every technical decision traces back to a business requirement. When someone asks "why Azure OpenAI instead of a custom model?", you can answer: "Because the client needs summaries in <5 seconds, and GPT-4 Turbo with streaming meets that requirement while a custom model would take 6+ months to train."</p>
+                    </div>
+                </div>
+                
+                <h3>Objective 2: Requirements Gathering from Business and Technical Stakeholders</h3>
+                
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-num">2</div>
+                        <div class="step-title">Stakeholder Engagement Strategy</div>
+                    </div>
+                    
+                    <div class="narrative">
+                        <p><strong>The Challenge:</strong> AI projects have multiple stakeholders with different concerns. The CMO wants faster patient care. The CIO worries about integration. The Privacy Officer can veto the entire project. You need input from all of them.</p>
+                    </div>
+                    
+                    <div class="experience-box">
+                        <h5>Stakeholder Mapping Approach</h5>
+                        <p>Four types of stakeholders are identified, with specific requirements gathered from each:</p>
+                        <table class="detail-table" style="margin-top: 15px;">
+                            <tr>
+                                <th>Stakeholder Type</th>
+                                <th>Their Concern</th>
+                                <th>Questions to Ask</th>
+                                <th>Requirements to Capture</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Business Sponsor</strong><br>(CMO, COO)</td>
+                                <td>Business outcomes, ROI, timeline</td>
+                                <td>What does success look like? What's the budget? When do you need results?</td>
+                                <td>Success metrics, budget constraints, timeline</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Technical Lead</strong><br>(CIO, CTO)</td>
+                                <td>Integration, infrastructure, maintenance</td>
+                                <td>What systems must this connect to? What's your Azure maturity? Who maintains this?</td>
+                                <td>Integration points, existing infrastructure, support model</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Compliance/Legal</strong><br>(Privacy Officer, CCO)</td>
+                                <td>Regulatory compliance, risk</td>
+                                <td>What regulations apply? What audit requirements? What's the risk tolerance?</td>
+                                <td>HIPAA/PCI-DSS requirements, audit logging, data residency</td>
+                            </tr>
+                            <tr>
+                                <td><strong>End Users</strong><br>(Clinicians, Underwriters)</td>
+                                <td>Usability, workflow fit, trust</td>
+                                <td>How does this fit your workflow? What would make you trust AI output? What's your biggest frustration?</td>
+                                <td>UX requirements, explainability needs, adoption concerns</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="caf-box">
+                        <h5>CAF Alignment: Stakeholder Engagement</h5>
+                        <p>The CAF AI Strategy emphasizes: <em>"Successful AI adoption requires alignment across business, IT, and governance stakeholders. Each group has different concerns that must be addressed."</em></p>
+                        <p style="margin-top: 10px;">Our workshop implements this by:</p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>Including named stakeholders in scenario briefs (Dr. Torres, James Park, Dr. Sarah Chen)</li>
+                            <li>Capturing requirements from each stakeholder type</li>
+                            <li>Identifying potential blockers early (Privacy Officer approval, legacy system limitations)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h3>Objective 3: Structuring AI Use Cases Across Industries</h3>
+                
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-num">3</div>
+                        <div class="step-title">Industry-Specific Use Case Structuring</div>
+                    </div>
+                    
+                    <div class="narrative">
+                        <p><strong>The Challenge:</strong> AI use cases in healthcare look different from banking. The terminology, workflows, compliance requirements, and success metrics are all industry-specific. A generic approach fails.</p>
+                    </div>
+                    
+                    <div class="experience-box">
+                        <h5>How Use Cases Are Structured by Industry</h5>
+                        <table class="detail-table" style="margin-top: 15px;">
+                            <tr>
+                                <th>Dimension</th>
+                                <th>Healthcare</th>
+                                <th>Banking/BFSI</th>
+                                <th>Why It Matters</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Primary Users</strong></td>
+                                <td>Clinicians, nurses, care coordinators</td>
+                                <td>Loan officers, underwriters, compliance</td>
+                                <td>Different users have different workflows and trust levels with AI</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Data Types</strong></td>
+                                <td>Clinical notes, lab results, imaging reports</td>
+                                <td>Pay stubs, tax returns, bank statements</td>
+                                <td>Different AI capabilities needed (NLP vs. document extraction)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Compliance</strong></td>
+                                <td>HIPAA, HITRUST, state privacy laws</td>
+                                <td>PCI-DSS, GLBA, Fair Lending (ECOA/HMDA)</td>
+                                <td>Different Azure configurations, audit requirements</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Latency Tolerance</strong></td>
+                                <td>Real-time (<5 sec) for clinical decisions</td>
+                                <td>Near-real-time (<30 sec) for document processing</td>
+                                <td>Different architecture patterns (streaming vs. batch)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Explainability Need</strong></td>
+                                <td>High — clinicians must verify AI reasoning</td>
+                                <td>Very High — regulators may audit AI decisions</td>
+                                <td>Different output formats (citations vs. confidence scores)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Error Tolerance</strong></td>
+                                <td>Low — patient safety at stake</td>
+                                <td>Medium — financial impact, but human reviews</td>
+                                <td>Different human-in-loop designs</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Success Metrics</strong></td>
+                                <td>Time saved, clinician satisfaction, patient outcomes</td>
+                                <td>Approval speed, accuracy, consistency, cost per loan</td>
+                                <td>Different KPIs to track</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="reasoning-box">
+                        <h5>Why Industry-Specific Structuring Matters</h5>
+                        <p><strong>Generic approach failure:</strong> A team that treats healthcare like banking will miss HIPAA requirements, design for wrong latency, and build UX that clinicians won't trust.</p>
+                        <p style="margin-top: 10px;"><strong>Recommended approach:</strong> Industry-specific scenario briefs with realistic data, stakeholders, and constraints enable workshop participants to work with scenarios that mirror their actual environment.</p>
+                    </div>
+                </div>
+                
+                <h3>Objective 4: Scoping Constraints (Latency, Security, Compliance, Explainability)</h3>
+                
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-num">4</div>
+                        <div class="step-title">The Four Critical Constraints</div>
+                    </div>
+                    
+                    <div class="narrative">
+                        <p><strong>The Challenge:</strong> Every AI solution operates within constraints. Ignoring constraints leads to solutions that work in the lab but fail in production. Industry case studies show projects have been derailed by each of these constraints.</p>
+                    </div>
+                    
+                    <h4>Constraint 1: Latency</h4>
+                    <div class="experience-box">
+                        <h5>Latency Scoping in Practice</h5>
+                        <p><strong>The question:</strong> How fast must the AI respond?</p>
+                        <p style="margin-top: 10px;"><strong>Why it matters:</strong> Latency requirements drive architecture decisions. A 5-second requirement means streaming responses. A 1-minute requirement allows batch processing. A 100ms requirement may eliminate LLMs entirely.</p>
+                        <table class="detail-table" style="margin-top: 15px;">
+                            <tr>
+                                <th>Latency Requirement</th>
+                                <th>Use Case Example</th>
+                                <th>Azure Architecture Pattern</th>
+                            </tr>
+                            <tr>
+                                <td><strong><100ms</strong></td>
+                                <td>Real-time fraud detection</td>
+                                <td>Pre-computed models, Azure ML real-time endpoints, caching</td>
+                            </tr>
+                            <tr>
+                                <td><strong><5 seconds</strong></td>
+                                <td>Clinical note summarization</td>
+                                <td>Azure OpenAI with streaming, optimized prompts, hybrid search</td>
+                            </tr>
+                            <tr>
+                                <td><strong><30 seconds</strong></td>
+                                <td>Document extraction</td>
+                                <td>Document Intelligence sync API, parallel processing</td>
+                            </tr>
+                            <tr>
+                                <td><strong><5 minutes</strong></td>
+                                <td>Batch report generation</td>
+                                <td>Azure Functions with queue, async processing</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Overnight batch</strong></td>
+                                <td>Daily risk scoring</td>
+                                <td>Azure Data Factory, scheduled pipelines</td>
+                            </tr>
+                        </table>
+                        <p style="margin-top: 15px;"><strong>Our solutions:</strong></p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><em>Healthcare:</em> <5 second requirement → Azure OpenAI with streaming + cached embeddings</li>
+                            <li><em>Banking:</em> <30 second per document → Document Intelligence sync API + parallel processing</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>Constraint 2: Security</h4>
+                    <div class="experience-box">
+                        <h5>Security Scoping in Practice</h5>
+                        <p><strong>The question:</strong> How sensitive is the data? Who can access it? Can it leave the network?</p>
+                        <p style="margin-top: 10px;"><strong>Why it matters:</strong> Security requirements determine network architecture, encryption, and access controls. PHI (Protected Health Information) and PII (Personally Identifiable Information) have strict handling requirements.</p>
+                        <table class="detail-table" style="margin-top: 15px;">
+                            <tr>
+                                <th>Security Requirement</th>
+                                <th>Azure Implementation</th>
+                                <th>Our Solutions</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Data cannot traverse public internet</strong></td>
+                                <td>Private endpoints, VNet integration, ExpressRoute</td>
+                                <td>Both solutions use private endpoints for all Azure services</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Encryption at rest</strong></td>
+                                <td>Customer Managed Keys (CMK) via Key Vault</td>
+                                <td>CMK encryption for Blob Storage, Cosmos DB</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Encryption in transit</strong></td>
+                                <td>TLS 1.2+ enforced</td>
+                                <td>TLS 1.2 minimum, TLS 1.0/1.1 disabled</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Access control</strong></td>
+                                <td>Azure Entra ID, RBAC, Conditional Access</td>
+                                <td>Role-based access (Clinician, Underwriter, Admin), MFA required</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Audit logging</strong></td>
+                                <td>Azure Monitor, Log Analytics, immutable storage</td>
+                                <td>All AI queries logged, 7-year retention</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <h4>Constraint 3: Compliance</h4>
+                    <div class="experience-box">
+                        <h5>Compliance Scoping in Practice</h5>
+                        <p><strong>The question:</strong> What regulations apply? What audit requirements exist? What happens if we fail compliance?</p>
+                        <p style="margin-top: 10px;"><strong>Why it matters:</strong> Compliance violations can result in fines, lawsuits, and reputational damage. In healthcare, HIPAA violations can reach $1.5M per incident. In banking, fair lending violations can result in consent decrees and executive liability.</p>
+                        <table class="detail-table" style="margin-top: 15px;">
+                            <tr>
+                                <th>Regulation</th>
+                                <th>Key Requirements</th>
+                                <th>Azure Implementation</th>
+                            </tr>
+                            <tr>
+                                <td><strong>HIPAA</strong> (Healthcare)</td>
+                                <td>BAA with vendors, PHI protection, audit trails, breach notification</td>
+                                <td>BAA-eligible services only, US regions, 7-year logs, private endpoints</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PCI-DSS</strong> (Banking)</td>
+                                <td>Cardholder data protection, encryption, access controls, vulnerability management</td>
+                                <td>PCI-DSS certified services, HSM-backed keys, network segmentation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>GLBA</strong> (Banking)</td>
+                                <td>NPI protection, privacy notices, safeguards rule</td>
+                                <td>Encryption, access controls, audit logging</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fair Lending</strong> (Banking)</td>
+                                <td>No discrimination in credit decisions, explainable decisions, adverse action notices</td>
+                                <td>AI assists only (no auto-decisions), bias testing required for any scoring</td>
+                            </tr>
+                        </table>
+                        <p style="margin-top: 15px;"><strong>Critical point:</strong> The banking solution explicitly does NOT make approval decisions. It extracts data only. This is intentional — any AI that influences credit decisions must undergo bias testing and fair lending review. The architecture is designed around this constraint.</p>
+                    </div>
+                    
+                    <h4>Constraint 4: Explainability</h4>
+                    <div class="experience-box">
+                        <h5>Explainability Scoping in Practice</h5>
+                        <p><strong>The question:</strong> Must users understand why the AI made a decision? Can they override it? Must we explain decisions to regulators or customers?</p>
+                        <p style="margin-top: 10px;"><strong>Why it matters:</strong> Black-box AI fails in regulated industries. Clinicians won't trust summaries they can't verify. Regulators will reject risk scores they can't audit. Customers have the right to understand why they were denied credit.</p>
+                        <table class="detail-table" style="margin-top: 15px;">
+                            <tr>
+                                <th>Explainability Need</th>
+                                <th>Implementation Approach</th>
+                                <th>Our Solutions</th>
+                            </tr>
+                            <tr>
+                                <td><strong>User must verify AI output</strong></td>
+                                <td>Citations to source documents</td>
+                                <td>Healthcare: Summaries cite [Note ID] for each fact</td>
+                            </tr>
+                            <tr>
+                                <td><strong>User must know confidence level</strong></td>
+                                <td>Confidence scores per field</td>
+                                <td>Banking: Each extracted field shows confidence %, highlights <90%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>User can override AI</strong></td>
+                                <td>Human-in-the-loop design</td>
+                                <td>Both: AI assists, human decides. No auto-approve.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Auditor can review AI decisions</strong></td>
+                                <td>Log all inputs, outputs, reasoning</td>
+                                <td>Both: Full audit trail in Log Analytics, 7-year retention</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Customer can request explanation</strong></td>
+                                <td>Store decision factors, generate plain-language explanation</td>
+                                <td>Banking: Validation results stored, can generate adverse action explanation</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SECTION 4: DETAILED SOLUTIONS ==================== -->
+        <div id="solutions" class="content-section">
+            
+            <div class="section-box">
+                <h2>🔧 Detailed Solutions with Reasoning</h2>
+                
+                <div class="narrative">
+                    <p>This section provides the complete technical solutions for both workshops, with detailed reasoning for every architectural decision. The focus is not just on <em>what</em> to build — but <em>why</em> each choice is recommended.</p>
+                </div>
+                
+                <div class="workshop-tabs">
+                    <button class="tab-btn healthcare active" onclick="showWorkshop('healthcare')">
+                        <span class="tab-icon">🏥</span>
+                        Healthcare Solution
+                        <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 5px;">Clinical Note Summarization</div>
+                    </button>
+                    <button class="tab-btn banking" onclick="showWorkshop('banking')">
+                        <span class="tab-icon">🏦</span>
+                        Banking Solution
+                        <div style="font-size: 0.85rem; opacity: 0.9; margin-top: 5px;">Document Extraction Pipeline</div>
+                    </button>
+                </div>
+                
+                <!-- Healthcare Solution -->
+                <div id="healthcare-workshop" class="workshop-content active">
+                    
+                    <h3>Healthcare: Clinical Note Summarization</h3>
+                    
+                    <div class="narrative">
+                        <p><strong>Business Problem:</strong> Clinicians at MedCare Regional Hospital Network spend 8-12 minutes per patient reviewing unstructured clinical notes from multiple sources (ED visits, specialist consults, nursing observations, discharge summaries). With 25-30 patients per day, this consumes 4-5 hours — time that should be spent on patient care.</p>
+                        <p style="margin-top: 10px;"><strong>AI Solution:</strong> A RAG-based summarization system that retrieves relevant patient notes and generates a structured summary in <5 seconds, displayed in an Epic EMR sidebar.</p>
+                    </div>
+                    
+                    <h4>Architecture with Reasoning</h4>
+                    
+                    <div class="arch-box">
+                        <h4>Solution Architecture</h4>
+                        <div class="arch-flow">
+                            <div class="arch-node" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+                                <strong>Epic EMR</strong><br><small>Clinical Notes</small>
+                            </div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-node" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+                                <strong>Azure Blob</strong><br><small>Secure Storage</small>
+                            </div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-node">
+                                <strong>Azure AI Search</strong><br><small>Index & Retrieve</small>
+                            </div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-node">
+                                <strong>Azure OpenAI</strong><br><small>Summarize</small>
+                            </div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-node" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                                <strong>EMR Sidebar</strong><br><small>Clinician View</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="reasoning-box">
+                        <h5>Why RAG (Retrieval-Augmented Generation)?</h5>
+                        <p>RAG is recommended over fine-tuning or prompt-only approaches for specific reasons:</p>
+                        <table class="detail-table" style="margin-top: 15px;">
+                            <tr>
+                                <th>Approach</th>
+                                <th>Pros</th>
+                                <th>Cons</th>
+                                <th>Why Not Recommended</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Fine-tuned Model</strong></td>
+                                <td>Potentially faster inference, specialized vocabulary</td>
+                                <td>No citations, expensive to train, hallucination risk, needs retraining</td>
+                                <td>HIPAA requires audit trail — we need to cite source notes. Fine-tuned models can't do this.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Prompt-Only</strong></td>
+                                <td>Simple, no infrastructure</td>
+                                <td>Context window limits, can't handle 2.3M notes, no semantic search</td>
+                                <td>Patient histories can span years and thousands of notes. Can't fit in context window.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>RAG (Selected)</strong></td>
+                                <td>Citations, scalable, no training, grounded in real data</td>
+                                <td>More complex, slightly higher latency</td>
+                                <td>Best fit: provides citations for audit, scales to millions of notes, grounds output in actual patient data.</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <h4>Azure Service Selection with Reasoning</h4>
+                    
+                    <div class="experience-box">
+                        <h5>Azure OpenAI — GPT-4 Turbo</h5>
+                        <p><strong>Why GPT-4 Turbo specifically?</strong></p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><strong>128K context window:</strong> Clinical histories can be long. GPT-4 Turbo handles 128K tokens vs. 8K for GPT-3.5. This means we can include more relevant notes in context.</li>
+                            <li><strong>3x faster than GPT-4:</strong> Our <5 second latency requirement is tight. GPT-4 Turbo with streaming typically responds in 2-4 seconds.</li>
+                            <li><strong>Better instruction following:</strong> Clinical summarization requires precise formatting (sections, citations). GPT-4 Turbo follows complex instructions more reliably.</li>
+                            <li><strong>HIPAA eligible:</strong> Azure OpenAI is covered under Microsoft's BAA, unlike OpenAI's direct API.</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Configuration:</strong></p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><em>Model:</em> gpt-4-turbo (1106-preview)</li>
+                            <li><em>Region:</em> East US (HIPAA BAA, lowest latency for East Coast)</li>
+                            <li><em>TPM:</em> 80,000 tokens/minute (sized for 50 concurrent users)</li>
+                            <li><em>Temperature:</em> 0.3 (low for factual accuracy, not 0 to allow readable prose)</li>
+                            <li><em>Streaming:</em> Enabled (perceived latency improvement)</li>
+                        </ul>
+                        <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models" target="_blank" class="ms-link">📚 Azure OpenAI Models Documentation</a>
+                    </div>
+                    
+                    <div class="experience-box">
+                        <h5>Azure AI Search — Hybrid Search</h5>
+                        <p><strong>Why hybrid search (vector + keyword)?</strong></p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><strong>Vector search alone misses exact matches:</strong> A search for "ICD-10: I20.9" needs exact keyword matching. Vector search might return semantically similar but wrong codes.</li>
+                            <li><strong>Keyword search alone misses semantic meaning:</strong> A search for "chest pain" should find notes mentioning "angina" or "cardiac discomfort." Keyword search misses these.</li>
+                            <li><strong>Hybrid combines both:</strong> We get semantic understanding AND exact matching. Best of both worlds.</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Configuration:</strong></p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><em>SKU:</em> Standard S2 (handles 2.3M documents with room to grow)</li>
+                            <li><em>Replicas:</em> 2 (99.9% SLA, high availability)</li>
+                            <li><em>Partitions:</em> 2 (storage for 2.3M notes + embeddings)</li>
+                            <li><em>Semantic ranking:</em> Enabled (improves relevance of top results)</li>
+                        </ul>
+                        <a href="https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview" target="_blank" class="ms-link">📚 Azure AI Search Hybrid Search</a>
+                    </div>
+                    
+                    <h4>Compliance Implementation</h4>
+                    
+                    <div class="caf-box">
+                        <h5>HIPAA Compliance Checklist</h5>
+                        <p>Every element of this architecture is designed for HIPAA compliance:</p>
+                        <ul class="checklist">
+                            <li><strong>Business Associate Agreement (BAA):</strong> Signed with Microsoft covering Azure OpenAI, AI Search, Blob Storage, Monitor. Available in Azure Trust Center.</li>
+                            <li><strong>Data Residency:</strong> All resources deployed in US regions only (East US). Azure Policy enforces this.</li>
+                            <li><strong>Encryption at Rest:</strong> Customer Managed Keys (CMK) via Azure Key Vault. Keys rotated every 90 days.</li>
+                            <li><strong>Encryption in Transit:</strong> TLS 1.2+ enforced. TLS 1.0/1.1 disabled in storage account settings.</li>
+                            <li><strong>Network Isolation:</strong> Private endpoints for all services. No public internet access to PHI. ExpressRoute connection to hospital network.</li>
+                            <li><strong>Audit Logging:</strong> All AI queries logged to Log Analytics. 7-year retention (HIPAA minimum). Immutable storage for tamper-proof audit trail.</li>
+                            <li><strong>Access Control:</strong> Azure Entra ID with RBAC. Only clinicians with "ClinicalAI.Reader" role can access summaries. MFA required.</li>
+                            <li><strong>Minimum Necessary:</strong> Summaries include only information relevant to current encounter. Full notes available via citation links for verification.</li>
+                        </ul>
+                        <a href="https://learn.microsoft.com/en-us/azure/compliance/offerings/offering-hipaa-us" target="_blank" class="ms-link">📚 Azure HIPAA Compliance</a>
+                    </div>
+                </div>
+                
+                <!-- Banking Solution -->
+                <div id="banking-workshop" class="workshop-content">
+                    
+                    <h3>Banking: Intelligent Document Extraction</h3>
+                    
+                    <div class="narrative">
+                        <p><strong>Business Problem:</strong> Loan officers at FirstChoice Community Bank spend 45-60 minutes per application manually extracting data from PDFs (pay stubs, W-2s, tax returns, bank statements). With 220 applications per day, this creates a bottleneck that extends approval cycles to 7-10 days — well above the industry benchmark of 3-5 days.</p>
+                        <p style="margin-top: 10px;"><strong>AI Solution:</strong> A document processing pipeline that uses Azure Document Intelligence to extract data from financial documents, with Azure OpenAI validating for consistency, reducing data entry time to 10-15 minutes per application.</p>
+                    </div>
+                    
+                    <h4>Architecture with Reasoning</h4>
+                    
+                    <div class="arch-box">
+                        <h4>Solution Architecture</h4>
+                        <div class="arch-flow">
+                            <div class="arch-node" style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);">
+                                <strong>SharePoint</strong><br><small>Document Upload</small>
+                            </div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-node" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+                                <strong>Azure Blob</strong><br><small>Secure Storage</small>
+                            </div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-node">
+                                <strong>Document Intelligence</strong><br><small>Extract Data</small>
+                            </div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-node">
+                                <strong>Azure OpenAI</strong><br><small>Validate</small>
+                            </div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-node" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+                                <strong>Dashboard</strong><br><small>Underwriter Review</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="reasoning-box">
+                        <h5>Why Two-Stage (Extraction + Validation)?</h5>
+                        <p>This architecture uses Document Intelligence for extraction and GPT-4 for validation. Here's the reasoning:</p>
+                        <table class="detail-table" style="margin-top: 15px;">
+                            <tr>
+                                <th>Stage</th>
+                                <th>Tool</th>
+                                <th>Why This Tool</th>
+                                <th>What It Does</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Extraction</strong></td>
+                                <td>Azure Document Intelligence</td>
+                                <td>Pre-trained on millions of financial documents. 95-98% accuracy on standard forms. Structured output with confidence scores.</td>
+                                <td>Extracts: employer name, income, dates, account numbers, balances from PDFs</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Validation</strong></td>
+                                <td>Azure OpenAI (GPT-4)</td>
+                                <td>Catches errors that rules can't anticipate. Understands context. Provides natural language explanations.</td>
+                                <td>Validates: Does monthly income × 12 ≈ annual income? Are dates logical? Do employer names match across documents?</td>
+                            </tr>
+                        </table>
+                        <p style="margin-top: 15px;"><strong>Why not use GPT-4 for extraction?</strong> Document Intelligence is purpose-built for document extraction. It's faster, cheaper, and more accurate for structured extraction. GPT-4 excels at reasoning and validation — use each tool for what it does best.</p>
+                    </div>
+                    
+                    <h4>Azure Service Selection with Reasoning</h4>
+                    
+                    <div class="experience-box">
+                        <h5>Azure AI Document Intelligence</h5>
+                        <p><strong>Why Document Intelligence over custom OCR?</strong></p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><strong>Pre-built models:</strong> Models for W-2, invoices, receipts, bank statements already trained. No training data needed from you.</li>
+                            <li><strong>95-98% accuracy:</strong> On standard forms, accuracy is excellent. Custom models might achieve 99%, but require months of training data collection.</li>
+                            <li><strong>Confidence scores:</strong> Every extracted field includes a confidence score. Underwriters can focus review on low-confidence fields.</li>
+                            <li><strong>Table extraction:</strong> Handles complex tables in bank statements and tax returns.</li>
+                            <li><strong>Handwriting support:</strong> Can extract handwritten notes (useful for older documents).</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Configuration:</strong></p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><em>SKU:</em> S0 (Standard) — $1.50 per 1,000 pages</li>
+                            <li><em>Models:</em> prebuilt-tax.us.w2, prebuilt-invoice, prebuilt-document (fallback)</li>
+                            <li><em>Custom model:</em> Train for non-standard pay stub formats (varies by employer)</li>
+                        </ul>
+                        <a href="https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/overview" target="_blank" class="ms-link">📚 Document Intelligence Overview</a>
+                    </div>
+                    
+                    <div class="experience-box">
+                        <h5>Azure OpenAI — Validation Layer</h5>
+                        <p><strong>Why add GPT-4 validation?</strong></p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><strong>Catches logical errors:</strong> "Pay stub shows $5,200/month but applicant stated $75,000/year — math doesn't match (should be $62,400)."</li>
+                            <li><strong>Cross-document validation:</strong> "Employer name on W-2 is 'Acme Corp' but pay stub says 'Acme Corporation' — likely same employer but flag for review."</li>
+                            <li><strong>Date logic:</strong> "Pay stub dated 2025-01-15 but we're processing in December 2024 — future date, likely error."</li>
+                            <li><strong>Natural language explanations:</strong> Instead of error codes, underwriters see "Income appears inconsistent: stated $75K but documents show $62K."</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>Configuration:</strong></p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><em>Model:</em> gpt-4-turbo</li>
+                            <li><em>Temperature:</em> 0.1 (very low — we want factual validation, not creative writing)</li>
+                            <li><em>Response format:</em> JSON (structured output for dashboard)</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>Compliance Implementation</h4>
+                    
+                    <div class="caf-box">
+                        <h5>Banking Compliance Checklist</h5>
+                        <ul class="checklist">
+                            <li><strong>PCI-DSS Level 2:</strong> All services deployed in PCI-DSS compliant configuration. Credit card numbers (if present in statements) tokenized before storage.</li>
+                            <li><strong>GLBA Safeguards:</strong> Customer NPI encrypted at rest (CMK) and in transit (TLS 1.2+). Access logged and auditable.</li>
+                            <li><strong>SOC 2 Type II:</strong> Azure services covered under Microsoft SOC 2 report. Diagnostic logging enabled on all resources.</li>
+                            <li><strong>Fair Lending (Critical):</strong> This solution does NOT make approval decisions. It extracts data only. Underwriter always reviews and decides. Any future AI scoring would require bias testing.</li>
+                            <li><strong>Data Retention:</strong> 7-year retention for loan documents. Lifecycle policy: Hot (30 days) → Cool (1 year) → Archive (7 years).</li>
+                            <li><strong>Key Management:</strong> HSM-backed keys in Key Vault Premium. 90-day rotation. Separate keys for prod/dev environments.</li>
+                        </ul>
+                        <a href="https://learn.microsoft.com/en-us/azure/compliance/offerings/offering-pci-dss" target="_blank" class="ms-link">📚 Azure PCI-DSS Compliance</a>
+                    </div>
+                    
+                    <div class="reasoning-box">
+                        <h5>Why We Don't Do AI Risk Scoring (Yet)</h5>
+                        <p>You might wonder: "Why not have AI score the loan risk too?" Here's our reasoning:</p>
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li><strong>Fair lending laws are strict:</strong> ECOA and HMDA require that credit decisions not discriminate based on protected classes (race, gender, age, etc.). AI models can inadvertently encode bias.</li>
+                            <li><strong>Explainability requirements:</strong> If you deny a loan, you must explain why. "The AI said no" is not acceptable. You need specific factors.</li>
+                            <li><strong>Regulatory scrutiny:</strong> Bank examiners (OCC, FDIC) are increasingly focused on AI in credit decisions. A poorly implemented AI scorer can result in consent decrees.</li>
+                            <li><strong>Recommended approach:</strong> Start with extraction (low risk, high value). Validate the technology works. Then, in Phase 2, consider AI-assisted scoring with proper bias testing, explainability, and legal review.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SECTION 5: COST & WELL-ARCHITECTED ==================== -->
+        <div id="cost" class="content-section">
+            
+            <div class="section-box">
+                <h2>💰 Cost Optimization & Well-Architected Framework</h2>
+                
+                <div class="narrative">
+                    <p>Cost optimization isn't an afterthought — it's built into our architecture from day one. We follow the <strong>Azure Well-Architected Framework Cost Optimization pillar</strong> to ensure solutions deliver value without unnecessary expense.</p>
+                </div>
+                
+                <h3>Cost Analysis: Healthcare Solution</h3>
+                
+                <table class="cost-table">
+                    <tr>
+                        <th>Service</th>
+                        <th>Configuration</th>
+                        <th>Monthly Cost</th>
+                        <th>Optimization Applied</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Azure OpenAI</strong></td>
+                        <td>GPT-4 Turbo, 80K TPM, ~2M tokens/day</td>
+                        <td>$1,800</td>
+                        <td>Streaming reduces response size; optimized prompts minimize tokens</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Azure AI Search</strong></td>
+                        <td>Standard S2, 2 replicas, 2 partitions</td>
+                        <td>$980</td>
+                        <td>Semantic ranking only on top 50 results, not entire index</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Azure Blob Storage</strong></td>
+                        <td>Standard GRS, 500GB, lifecycle policies</td>
+                        <td>$45</td>
+                        <td>Hot→Cool→Archive lifecycle saves 60-80% on old data</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Azure AI Foundry</strong></td>
+                        <td>Standard compute, prompt flow</td>
+                        <td>$150</td>
+                        <td>Serverless inference, pay per use only</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Azure Monitor</strong></td>
+                        <td>Log Analytics, 7-year retention</td>
+                        <td>$120</td>
+                        <td>Archive to blob after 90 days (80% cheaper than hot)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Networking</strong></td>
+                        <td>Private endpoints, ExpressRoute</td>
+                        <td>$300</td>
+                        <td>Shared ExpressRoute with existing hospital connection</td>
+                    </tr>
+                    <tr class="total">
+                        <td><strong>TOTAL</strong></td>
+                        <td></td>
+                        <td><strong>~$3,400/month</strong></td>
+                        <td><strong>~$40,800/year</strong></td>
+                    </tr>
+                </table>
+                
+                <div class="experience-box">
+                    <h5>ROI Calculation: Healthcare</h5>
+                    <p><strong>Investment:</strong> $40,800/year (Azure costs) + $50,000 (development) = $90,800 Year 1</p>
+                    <p style="margin-top: 10px;"><strong>Savings Calculation:</strong></p>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>80 clinicians × 2.5 hours saved/day × $75/hour (loaded cost) × 250 working days</li>
+                        <li>= 80 × 2.5 × $75 × 250 = <strong>$3,750,000/year</strong></li>
+                    </ul>
+                    <p style="margin-top: 10px;"><strong>ROI:</strong> $3,750,000 ÷ $90,800 = <strong>41x return in Year 1</strong></p>
+                    <p style="margin-top: 10px;"><strong>Payback Period:</strong> ~9 days of operation</p>
+                </div>
+                
+                <h3>Cost Analysis: Banking Solution</h3>
+                
+                <table class="cost-table">
+                    <tr>
+                        <th>Service</th>
+                        <th>Configuration</th>
+                        <th>Monthly Cost</th>
+                        <th>Optimization Applied</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Azure Document Intelligence</strong></td>
+                        <td>S0, ~6,600 pages/day (220 apps × 30 pages)</td>
+                        <td>$2,000</td>
+                        <td>Pre-built models (no training cost), batch processing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Azure OpenAI</strong></td>
+                        <td>GPT-4 Turbo, validation only, ~500K tokens/day</td>
+                        <td>$450</td>
+                        <td>Validation only (not extraction), structured JSON output</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Azure Functions</strong></td>
+                        <td>Premium EP1, VNet integrated</td>
+                        <td>$180</td>
+                        <td>Auto-scale to minimum during nights/weekends</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Azure Cosmos DB</strong></td>
+                        <td>NoSQL, 4000 RU/s autoscale</td>
+                        <td>$290</td>
+                        <td>Autoscale reduces cost during low traffic periods</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Azure Blob Storage</strong></td>
+                        <td>Standard GRS, 1TB, lifecycle</td>
+                        <td>$60</td>
+                        <td>Archive after 1 year (90% cheaper than hot tier)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Azure Key Vault</strong></td>
+                        <td>Premium (HSM), 10 keys</td>
+                        <td>$50</td>
+                        <td>Shared across environments where compliant</td>
+                    </tr>
+                    <tr class="total">
+                        <td><strong>TOTAL</strong></td>
+                        <td></td>
+                        <td><strong>~$3,030/month</strong></td>
+                        <td><strong>~$36,360/year</strong></td>
+                    </tr>
+                </table>
+                
+                <div class="experience-box">
+                    <h5>ROI Calculation: Banking</h5>
+                    <p><strong>Investment:</strong> $36,360/year (Azure costs) + $75,000 (development) = $111,360 Year 1</p>
+                    <p style="margin-top: 10px;"><strong>Savings Calculation:</strong></p>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>220 applications/day × 40 minutes saved × $50/hour × 250 working days</li>
+                        <li>= 220 × (40/60) × $50 × 250 = <strong>$1,833,333/year</strong></li>
+                    </ul>
+                    <p style="margin-top: 10px;"><strong>Additional Value:</strong></p>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>Reduced approval time (7-10 days → 3-5 days) improves customer satisfaction</li>
+                        <li>Reduced error rate (8% → <2%) decreases rework</li>
+                        <li>Competitive advantage: faster approvals win more business</li>
+                    </ul>
+                    <p style="margin-top: 10px;"><strong>ROI:</strong> $1,833,333 ÷ $111,360 = <strong>16x return in Year 1</strong></p>
+                </div>
+                
+                <h3>Cost Optimization Strategies</h3>
+                
+                <div class="reasoning-box">
+                    <h5>Six Strategies We Applied</h5>
+                    <table class="detail-table" style="margin-top: 15px;">
+                        <tr>
+                            <th>Strategy</th>
+                            <th>How We Applied It</th>
+                            <th>Savings</th>
+                        </tr>
+                        <tr>
+                            <td><strong>1. Right-Size from Day One</strong></td>
+                            <td>Start with AI Search S1 for POC, upgrade to S2 only when needed. Don't over-provision.</td>
+                            <td>30-40%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Reserved Capacity</strong></td>
+                            <td>Commit to 1-year reserved capacity for predictable workloads (AI Search, Cosmos DB).</td>
+                            <td>25-35%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Lifecycle Policies</strong></td>
+                            <td>Move data to Cool tier after 30 days, Archive after 1 year. Meets retention at lower cost.</td>
+                            <td>60-80% on storage</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4. Token Optimization</strong></td>
+                            <td>Use GPT-4 Turbo (cheaper than GPT-4), optimize prompts, cache common queries.</td>
+                            <td>40-50% on OpenAI</td>
+                        </tr>
+                        <tr>
+                            <td><strong>5. Selective Semantic Search</strong></td>
+                            <td>Apply semantic ranking only to top 50 results, not entire index.</td>
+                            <td>20-30% on Search</td>
+                        </tr>
+                        <tr>
+                            <td><strong>6. Autoscale Everything</strong></td>
+                            <td>Use autoscale for Cosmos DB, Functions. Scale to minimum during nights/weekends.</td>
+                            <td>30-40%</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <h3>Azure Well-Architected Framework Alignment</h3>
+                
+                <div class="narrative">
+                    <p>Our solutions are designed following all five pillars of the <a href="https://learn.microsoft.com/en-us/azure/well-architected/" target="_blank" style="color: #58a6ff;">Azure Well-Architected Framework</a>:</p>
+                </div>
+                
+                <table class="detail-table">
+                    <tr>
+                        <th>Pillar</th>
+                        <th>How We Address It</th>
+                        <th>Specific Implementation</th>
+                    </tr>
+                    <tr>
+                        <td><strong>🔵 Reliability</strong></td>
+                        <td>Design for failure, ensure availability</td>
+                        <td>AI Search: 2 replicas (99.9% SLA)<br>Blob Storage: GRS replication<br>Functions: Dead-letter queues for failed processing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>🔴 Security</strong></td>
+                        <td>Protect data and systems</td>
+                        <td>Private endpoints for all services<br>CMK encryption via Key Vault<br>Entra ID with MFA + Conditional Access<br>Zero Trust: verify explicitly, least privilege</td>
+                    </tr>
+                    <tr>
+                        <td><strong>🟢 Cost Optimization</strong></td>
+                        <td>Manage costs, maximize value</td>
+                        <td>Right-sized SKUs<br>Autoscale for variable workloads<br>Lifecycle policies for storage<br>Reserved capacity for predictable usage</td>
+                    </tr>
+                    <tr>
+                        <td><strong>🟡 Operational Excellence</strong></td>
+                        <td>Run and monitor effectively</td>
+                        <td>Azure Monitor for all services<br>Log Analytics with KQL queries<br>Alerts on latency >5s, errors<br>Infrastructure as Code (Bicep)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>🟣 Performance Efficiency</strong></td>
+                        <td>Meet performance requirements</td>
+                        <td>Streaming responses for perceived speed<br>Hybrid search for accuracy<br>Caching for repeated queries<br>Right model selection (GPT-4 Turbo vs GPT-4)</td>
+                    </tr>
+                </table>
+                
+                <div style="margin-top: 25px;">
+                    <a href="https://learn.microsoft.com/en-us/azure/well-architected/" target="_blank" class="ms-link">📘 Azure Well-Architected Framework</a>
+                    <a href="https://learn.microsoft.com/en-us/azure/well-architected/cost-optimization/" target="_blank" class="ms-link">📘 Cost Optimization Pillar</a>
+                    <a href="https://learn.microsoft.com/en-us/assessments/azure-architecture-review/" target="_blank" class="ms-link">📘 Well-Architected Review Assessment</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==================== GREAT LEARNING FOOTER ==================== -->
+        <div class="gl-footer">
+            <div class="gl-footer-logo">
+                <svg width="180" height="70" viewBox="0 0 200 70" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 10 C8 10, 2 22, 2 32 C2 45, 10 52, 22 52 C30 52, 36 48, 38 40 L26 40 L26 34 L46 34 L46 42 C42 54, 32 60, 20 60 C4 60, -6 46, -6 32 C-6 18, 6 4, 22 4 C34 4, 42 10, 44 18 L34 22 C32 18, 28 14, 22 14 C12 14, 6 22, 6 32 C6 42, 12 50, 22 50 C30 50, 34 46, 36 40 L26 40 L26 34" fill="#1E88E5" transform="translate(5,0)"/>
+                    <text x="55" y="28" font-family="Segoe UI" font-size="18" font-weight="600" fill="#1E88E5">Great</text>
+                    <text x="55" y="48" font-family="Segoe UI" font-size="18" font-weight="600" fill="#0D47A1">Learning</text>
+                    <text x="55" y="62" font-family="Segoe UI" font-size="8" letter-spacing="2" fill="#666">POWER AHEAD</text>
+                </svg>
+            </div>
+            
+            <div class="gl-copyright">
+                <p><strong>Proprietary content. © Great Learning. All Rights Reserved.</strong></p>
+                <p style="margin-top: 10px; font-size: 0.85rem;">Unauthorized use or distribution prohibited.</p>
+            </div>
+            
+            <div style="color: #666; font-size: 0.85rem;">
+                <p>Azure AI Workshop Solutions | CAF-Aligned | Well-Architected | Best Practices</p>
+                <p style="margin-top: 10px;">All Microsoft documentation links verified as of December 2024</p>
+                <p style="margin-top: 20px;">
+                    <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/strategy" target="_blank" class="ms-link">CAF AI Strategy</a>
+                    <a href="https://learn.microsoft.com/en-us/azure/well-architected/" target="_blank" class="ms-link">Well-Architected Framework</a>
+                    <a href="https://learn.microsoft.com/en-us/azure/ai-services/" target="_blank" class="ms-link">Azure AI Services</a>
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Section Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Workshop Tabs (within Solutions section)
+        function showWorkshop(type) {
+            document.querySelectorAll('.workshop-content').forEach(w => w.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(type + '-workshop').classList.add('active');
+            document.querySelector('.tab-btn.' + type).classList.add('active');
+        }
+    </script>
+</body>
+</html>
