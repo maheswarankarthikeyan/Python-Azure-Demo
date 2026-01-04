@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Architectures - Day 2: Frameworks & Production</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%); min-height: 100vh; }
+        .slide { min-height: 100vh; padding: 40px 60px; background: white; margin: 20px auto; max-width: 1400px; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); page-break-after: always; }
+        h1 { color: #0078d4; font-size: 2.4em; margin-bottom: 10px; border-bottom: 4px solid #0078d4; padding-bottom: 15px; }
+        h2 { color: #323130; font-size: 1.6em; margin: 25px 0 15px; }
+        h3 { color: #0078d4; font-size: 1.2em; margin: 20px 0 10px; }
+        h4 { color: #323130; font-size: 1.05em; margin-bottom: 8px; }
+        .subtitle { color: #605e5c; font-size: 1.1em; margin-bottom: 25px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin: 20px 0; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .card { background: #f3f2f1; border-radius: 8px; padding: 18px; border-left: 4px solid #0078d4; }
+        .card.green { border-left-color: #107c10; background: #f0fff0; }
+        .card.orange { border-left-color: #ff8c00; background: #fff8f0; }
+        .card.purple { border-left-color: #8764b8; background: #f8f0ff; }
+        .card.red { border-left-color: #d13438; background: #fff0f0; }
+        .card.blue { border-left-color: #0078d4; background: #f0f8ff; }
+        ul { margin-left: 20px; line-height: 1.7; }
+        li { margin: 4px 0; }
+        .highlight { background: #0078d4; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85em; }
+        .highlight.green { background: #107c10; }
+        .highlight.orange { background: #ff8c00; }
+        .highlight.red { background: #d13438; }
+        .highlight.purple { background: #8764b8; }
+        .time-badge { background: #107c10; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85em; display: inline-block; margin-bottom: 15px; }
+        .module-badge { background: #0078d4; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9em; display: inline-block; margin-bottom: 10px; }
+        .lab-badge { background: #ff8c00; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9em; display: inline-block; margin-bottom: 10px; }
+        .day-badge { background: #ff8c00; color: white; padding: 8px 20px; border-radius: 25px; font-size: 1.1em; display: inline-block; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95em; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #edebe9; }
+        th { background: #0078d4; color: white; }
+        tr:hover { background: #f3f2f1; }
+        .code-block { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; font-family: 'Consolas', monospace; font-size: 0.85em; overflow-x: auto; margin: 10px 0; white-space: pre-wrap; }
+        .code-block .comment { color: #6a9955; }
+        .code-block .keyword { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+        .code-block .function { color: #dcdcaa; }
+        .tip-box { display: flex; align-items: flex-start; gap: 12px; padding: 15px; background: #e6f7ff; border-radius: 8px; margin: 10px 0; border-left: 4px solid #0078d4; }
+        .warning-box { display: flex; align-items: flex-start; gap: 12px; padding: 15px; background: #fff4ce; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ff8c00; }
+        .danger-box { display: flex; align-items: flex-start; gap: 12px; padding: 15px; background: #fde7e9; border-radius: 8px; margin: 10px 0; border-left: 4px solid #d13438; }
+        .success-box { display: flex; align-items: flex-start; gap: 12px; padding: 15px; background: #dff6dd; border-radius: 8px; margin: 10px 0; border-left: 4px solid #107c10; }
+        .icon { font-size: 1.5em; }
+        .banking-scenario { background: linear-gradient(135deg, #1a472a, #2d5a3d); color: white; padding: 20px; border-radius: 10px; margin: 15px 0; }
+        .banking-scenario h4 { color: #90EE90; margin-bottom: 10px; }
+        
+        /* Notebook Styles */
+        .notebook-header { background: linear-gradient(135deg, #F37626, #E8590C); color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 10px; }
+        .notebook-cell { background: #f8f9fa; border: 1px solid #e1e4e8; border-top: none; padding: 15px; }
+        .notebook-cell.code { background: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', monospace; font-size: 0.85em; white-space: pre-wrap; }
+        .notebook-cell.output { background: #fff; border-left: 3px solid #107c10; }
+        .colab-badge { background: #F37626; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; }
+        .azure-badge { background: #0078d4; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; }
+        
+        /* Decision Tree Styles */
+        .tree-container { text-align: center; padding: 20px; background: #f8f9fa; border-radius: 12px; margin: 20px 0; }
+        .tree-node { display: inline-block; padding: 15px 25px; border-radius: 8px; margin: 5px; font-weight: 500; }
+        .tree-decision { background: #fff4ce; border: 2px solid #ff8c00; border-radius: 50px; }
+        .tree-connector { color: #666; font-size: 1.2em; margin: 5px 0; }
+        .tree-branch { display: inline-flex; gap: 40px; margin-top: 10px; }
+        
+        /* Pipeline Styles */
+        .pipeline { display: flex; align-items: center; justify-content: center; gap: 0; margin: 30px 0; flex-wrap: wrap; }
+        .pipeline-step { position: relative; padding: 20px 25px; min-width: 130px; text-align: center; color: white; }
+        .pipeline-step::after { content: ''; position: absolute; right: -15px; top: 50%; transform: translateY(-50%); border: 15px solid transparent; border-left: 15px solid; z-index: 1; }
+        .pipeline-step.blue { background: #0078d4; }
+        .pipeline-step.blue::after { border-left-color: #0078d4; }
+        .pipeline-step.purple { background: #8764b8; }
+        .pipeline-step.purple::after { border-left-color: #8764b8; }
+        .pipeline-step.orange { background: #ff8c00; }
+        .pipeline-step.orange::after { border-left-color: #ff8c00; }
+        .pipeline-step.green { background: #107c10; }
+        .pipeline-step.green::after { border-left-color: #107c10; }
+        .pipeline-step.red { background: #d13438; }
+        .pipeline-step.red::after { border-left-color: #d13438; }
+        .pipeline-step:last-child::after { display: none; }
+        .pipeline-step small { display: block; opacity: 0.9; font-size: 0.8em; margin-top: 5px; }
+        .pipeline-label { font-size: 0.7em; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 2px 8px; border-radius: 10px; }
+        
+        /* Architecture Layers */
+        .arch-container { max-width: 900px; margin: 20px auto; }
+        .arch-layer { margin: 0; padding: 25px; border-radius: 0; position: relative; }
+        .arch-layer:first-child { border-radius: 12px 12px 0 0; }
+        .arch-layer:last-child { border-radius: 0 0 12px 12px; }
+        .arch-layer-title { position: absolute; top: -12px; left: 20px; background: white; padding: 4px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85em; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .arch-services { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-top: 10px; }
+        .arch-service { background: white; padding: 15px 20px; border-radius: 8px; text-align: center; min-width: 120px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .arch-service-icon { font-size: 1.8em; margin-bottom: 8px; }
+        .arch-service-name { font-weight: 600; font-size: 0.9em; }
+        .arch-service-desc { font-size: 0.75em; color: #666; margin-top: 4px; }
+        .arch-connector { text-align: center; font-size: 1.5em; margin: -5px 0; position: relative; z-index: 10; }
+        .layer-blue { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
+        .layer-purple { background: linear-gradient(135deg, #f3e5f5, #e1bee7); }
+        .layer-green { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
+        .layer-orange { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+        
+        /* Comparison Cards */
+        .compare-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .compare-card { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .compare-header { padding: 20px; color: white; text-align: center; }
+        .compare-body { padding: 20px; background: white; }
+        .compare-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .compare-item:last-child { border-bottom: none; }
+        .compare-icon { font-size: 1.3em; }
+        
+        /* Vertical Steps */
+        .vsteps { max-width: 700px; margin: 20px auto; }
+        .vstep { display: flex; gap: 20px; margin: 15px 0; }
+        .vstep-num { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; flex-shrink: 0; font-size: 1.1em; }
+        .vstep-content { flex: 1; padding: 15px 20px; border-radius: 8px; }
+        .vstep-connector { width: 50px; display: flex; justify-content: center; margin: -5px 0; }
+        .vstep-connector::before { content: ''; width: 3px; height: 25px; background: #ddd; }
+        
+        @media print { .slide { box-shadow: none; margin: 0; page-break-after: always; } body { background: white; } }
+    </style>
+</head>
+<body>
+
+<!-- SLIDE 1: Day 2 Title -->
+<div class="slide">
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 85vh; text-align: center;">
+        <span class="day-badge" style="margin-bottom: 30px;">DAY 2</span>
+        <p style="color: #0078d4; font-size: 1.2em; margin-bottom: 20px;">Azure AI Workshop Series</p>
+        <h1 style="font-size: 3em; border: none; text-align: center; color: #1a1a2e;">AI Agent Architectures</h1>
+        <p class="subtitle" style="font-size: 1.5em; margin: 20px 0; color: #ff8c00;">Frameworks, Multi-Agent & Production Patterns</p>
+        <p style="color: #605e5c; font-size: 1.1em; margin-top: 30px;">From Concepts to Production-Ready Banking Agents</p>
+        <div style="margin-top: 40px;">
+            <span class="time-badge" style="font-size: 1em; padding: 12px 30px;">Full Day | Modules 5-12</span>
+        </div>
+        <div style="margin-top: 30px;">
+            <span class="highlight purple">Semantic Kernel</span>
+            <span class="highlight orange">Multi-Agent</span>
+            <span class="highlight green">Durable Functions</span>
+            <span class="highlight">Azure OpenAI</span>
+            <span class="highlight red">Observability</span>
+        </div>
+        <p style="margin-top: 50px; color: #8a8886;">Prerequisites: Day 1 Foundations Completed</p>
+    </div>
+</div>
+
+
+<!-- SLIDE 2: Day 1 Recap -->
+<div class="slide">
+    <span class="module-badge">Day 1 Recap</span>
+    <h1>🔄 Quick Recap: What We Covered Yesterday</h1>
+    <p class="subtitle">Building the Foundation for Today's Advanced Topics</p>
+
+    <div class="grid-2">
+        <div class="card blue">
+            <h4>🧠 Module 0: Agent vs Workflow</h4>
+            <ul>
+                <li><strong>Key Question:</strong> "Who decides the next step - code or LLM?"</li>
+                <li>Workflows = deterministic, fast, cheap</li>
+                <li>Agents = dynamic reasoning, flexible, costlier</li>
+                <li>Hybrid patterns combine both for production</li>
+            </ul>
+        </div>
+        <div class="card green">
+            <h4>🏷️ Module 1: Agent Taxonomy</h4>
+            <ul>
+                <li>Classification by autonomy, tools, collaboration</li>
+                <li>Banking archetypes: Advisor → Analyst → Operator → Executor</li>
+                <li>Autonomy inversely proportional to financial impact</li>
+            </ul>
+        </div>
+        <div class="card purple">
+            <h4>🧭 Module 2: Planning Patterns</h4>
+            <ul>
+                <li><strong>ReAct:</strong> Think → Act → Observe loop (exploratory)</li>
+                <li><strong>Plan-Execute:</strong> Plan upfront, execute sequentially (structured)</li>
+                <li><strong>Tree-of-Thought:</strong> Explore multiple paths (high-stakes)</li>
+            </ul>
+        </div>
+        <div class="card orange">
+            <h4>🧠 Module 3: Memory Systems</h4>
+            <ul>
+                <li>Short-term (session), Long-term (preferences), Episodic (history)</li>
+                <li>Azure backends: Redis, AI Search, Cosmos DB</li>
+                <li>Compliance: 7-year retention, PII masking</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card red" style="margin-top: 15px;">
+        <h4>🔍 Module 4: RAG Fundamentals</h4>
+        <div class="grid-3" style="margin-top: 10px;">
+            <div style="text-align: center;">
+                <strong>Pipeline</strong><br>
+                Query → Embed → Search → Retrieve → Generate
+            </div>
+            <div style="text-align: center;">
+                <strong>Embeddings</strong><br>
+                text-embedding-3-small (1536 dims)
+            </div>
+            <div style="text-align: center;">
+                <strong>Vector DB</strong><br>
+                Azure AI Search, FAISS, Cosmos DB
+            </div>
+        </div>
+    </div>
+
+    <div class="success-box" style="margin-top: 20px;">
+        <span class="icon">🎯</span>
+        <div>
+            <strong>Today's Focus:</strong> We'll build on these foundations with frameworks (Semantic Kernel), multi-agent patterns, workflow orchestration, and production observability.
+        </div>
+    </div>
+</div>
+
+
+<!-- SLIDE 3: Day 1 Quiz -->
+<div class="slide">
+    <span class="lab-badge">Knowledge Check</span>
+    <h1>📝 Day 1 Quiz: Test Your Understanding</h1>
+    <p class="subtitle">10 Questions Based on Yesterday's Material</p>
+
+    <div class="grid-2">
+        <div class="card blue">
+            <h4>Q1: Agent vs Workflow</h4>
+            <p>A payment processing system that validates amount, checks balance, and transfers funds follows the same steps every time. Is this an agent or workflow?</p>
+            <details style="margin-top: 10px;">
+                <summary style="cursor: pointer; color: #0078d4;"><strong>Show Answer</strong></summary>
+                <p style="background: #e6f7ff; padding: 10px; border-radius: 4px; margin-top: 5px;"><strong>Workflow</strong> - Steps are deterministic and known at design time. Code decides the path, not an LLM.</p>
+            </details>
+        </div>
+        <div class="card green">
+            <h4>Q2: Planning Patterns</h4>
+            <p>Which planning pattern is best for fraud investigation where the agent needs to discover evidence dynamically?</p>
+            <details style="margin-top: 10px;">
+                <summary style="cursor: pointer; color: #107c10;"><strong>Show Answer</strong></summary>
+                <p style="background: #dff6dd; padding: 10px; border-radius: 4px; margin-top: 5px;"><strong>ReAct</strong> - Think → Act → Observe loop allows emergent investigation paths based on findings.</p>
+            </details>
+        </div>
+        <div class="card purple">
+            <h4>Q3: Agent Autonomy</h4>
+            <p>A banking agent needs to approve wire transfers over $50,000. What autonomy level should it have?</p>
+            <details style="margin-top: 10px;">
+                <summary style="cursor: pointer; color: #8764b8;"><strong>Show Answer</strong></summary>
+                <p style="background: #f8f0ff; padding: 10px; border-radius: 4px; margin-top: 5px;"><strong>Level 2-3 (Advisor/Preparer)</strong> - High-value transactions require human approval. Agent should recommend, not execute.</p>
+            </details>
+        </div>
+        <div class="card orange">
+            <h4>Q4: Memory Types</h4>
+            <p>Where should you store a customer's risk tolerance preference that persists across sessions?</p>
+            <details style="margin-top: 10px;">
+                <summary style="cursor: pointer; color: #ff8c00;"><strong>Show Answer</strong></summary>
+                <p style="background: #fff8f0; padding: 10px; border-radius: 4px; margin-top: 5px;"><strong>Long-term memory</strong> - Persistent preferences stored in Vector DB or Cosmos DB with permanent TTL.</p>
+            </details>
+        </div>
+        <div class="card red">
+            <h4>Q5: RAG Pipeline</h4>
+            <p>What is the correct order of RAG pipeline steps?</p>
+            <details style="margin-top: 10px;">
+                <summary style="cursor: pointer; color: #d13438;"><strong>Show Answer</strong></summary>
+                <p style="background: #fde7e9; padding: 10px; border-radius: 4px; margin-top: 5px;"><strong>Query → Embed → Search → Retrieve → Generate</strong> - User query is embedded, similar docs found, context retrieved, then LLM generates response.</p>
+            </details>
+        </div>
+        <div class="card blue">
+            <h4>Q6: Workflow Patterns</h4>
+            <p>You need to check credit, income, and identity simultaneously. Which workflow pattern?</p>
+            <details style="margin-top: 10px;">
+                <summary style="cursor: pointer; color: #0078d4;"><strong>Show Answer</strong></summary>
+                <p style="background: #e6f7ff; padding: 10px; border-radius: 4px; margin-top: 5px;"><strong>Parallelization</strong> - Independent subtasks run concurrently, then aggregate results.</p>
+            </details>
+        </div>
+        <div class="card green">
+            <h4>Q7: Cost Comparison</h4>
+            <p>Which planning pattern has the lowest LLM cost for 10,000 daily tasks?</p>
+            <details style="margin-top: 10px;">
+                <summary style="cursor: pointer; color: #107c10;"><strong>Show Answer</strong></summary>
+                <p style="background: #dff6dd; padding: 10px; border-radius: 4px; margin-top: 5px;"><strong>Plan-Execute</strong> - Only 2-4 LLM calls vs ReAct (5-15) or Tree-of-Thought (10-50).</p>
+            </details>
+        </div>
+        <div class="card purple">
+            <h4>Q8: HITL Patterns</h4>
+            <p>When should an agent use "Escalation" vs "Approval Gate"?</p>
+            <details style="margin-top: 10px;">
+                <summary style="cursor: pointer; color: #8764b8;"><strong>Show Answer</strong></summary>
+                <p style="background: #f8f0ff; padding: 10px; border-radius: 4px; margin-top: 5px;"><strong>Escalation</strong> = agent recognizes its limits (uncertainty). <strong>Approval Gate</strong> = predefined checkpoint for high-risk actions.</p>
+            </details>
+        </div>
+        <div class="card orange">
+            <h4>Q9: Embedding Models</h4>
+            <p>Which Azure OpenAI embedding model is recommended for new projects?</p>
+            <details style="margin-top: 10px;">
+                <summary style="cursor: pointer; color: #ff8c00;"><strong>Show Answer</strong></summary>
+                <p style="background: #fff8f0; padding: 10px; border-radius: 4px; margin-top: 5px;"><strong>text-embedding-3-small</strong> - Newer, better performance. text-embedding-ada-002 is legacy/retiring.</p>
+            </details>
+        </div>
+        <div class="card red">
+            <h4>Q10: Multi-Agent</h4>
+            <p>In a loan approval multi-agent system, what role does the Orchestrator play?</p>
+            <details style="margin-top: 10px;">
+                <summary style="cursor: pointer; color: #d13438;"><strong>Show Answer</strong></summary>
+                <p style="background: #fde7e9; padding: 10px; border-radius: 4px; margin-top: 5px;"><strong>Coordinates workflow and aggregates results</strong> - Spawns specialist agents (Credit, Income, Compliance), collects outputs, synthesizes decision.</p>
+            </details>
+        </div>
+    </div>
+</div>
+
+
+<!-- SLIDE 4: RAG vs SLM vs MCP Comparison -->
+<div class="slide">
+    <h1>⚖️ RAG vs SLM vs MCP: Comprehensive Comparison</h1>
+    <p class="subtitle">Choosing the Right Architecture for Your Banking Use Case</p>
+
+    <table style="font-size: 0.85em;">
+        <tr>
+            <th style="width: 15%;">Aspect</th>
+            <th style="width: 28%;">🔍 RAG (Retrieval-Augmented Generation)</th>
+            <th style="width: 28%;">🧠 SLM (Small Language Models)</th>
+            <th style="width: 29%;">🔌 MCP (Model Context Protocol)</th>
+        </tr>
+        <tr>
+            <td><strong>What It Is</strong></td>
+            <td>Retrieve relevant docs → inject into LLM context → generate response</td>
+            <td>Smaller, specialized models (1-7B params) fine-tuned for specific tasks</td>
+            <td>Standardized protocol for LLMs to connect to external tools/data sources</td>
+        </tr>
+        <tr>
+            <td><strong>Best For</strong></td>
+            <td>Knowledge-intensive Q&A, policy lookup, document search</td>
+            <td>High-volume, narrow tasks (classification, extraction, routing)</td>
+            <td>Tool orchestration, real-time data access, multi-system integration</td>
+        </tr>
+        <tr>
+            <td><strong>Latency</strong></td>
+            <td><span class="highlight orange">Medium</span> (retrieval + generation)</td>
+            <td><span class="highlight green">Low</span> (small model, fast inference)</td>
+            <td><span class="highlight orange">Variable</span> (depends on tool calls)</td>
+        </tr>
+        <tr>
+            <td><strong>Cost</strong></td>
+            <td><span class="highlight orange">Medium</span> (embedding + LLM + vector DB)</td>
+            <td><span class="highlight green">Low</span> (can run on-premise/edge)</td>
+            <td><span class="highlight orange">Medium</span> (LLM + tool execution)</td>
+        </tr>
+        <tr>
+            <td><strong>Knowledge</strong></td>
+            <td>External docs, updated without retraining</td>
+            <td>Baked into model weights, requires fine-tuning to update</td>
+            <td>Real-time from connected systems</td>
+        </tr>
+        <tr>
+            <td><strong>Accuracy</strong></td>
+            <td>High for factual Q&A (grounded in docs)</td>
+            <td>High for trained tasks, poor generalization</td>
+            <td>High for structured data, depends on tool quality</td>
+        </tr>
+        <tr>
+            <td><strong>Complexity</strong></td>
+            <td>Medium (chunking, embedding, indexing)</td>
+            <td>High (training, deployment, versioning)</td>
+            <td>Medium (tool definitions, error handling)</td>
+        </tr>
+        <tr>
+            <td><strong>Azure Services</strong></td>
+            <td>AI Search + OpenAI + Blob Storage</td>
+            <td>Azure ML + Container Apps + ONNX Runtime</td>
+            <td>Azure Functions + API Management + OpenAI</td>
+        </tr>
+    </table>
+
+    <h3 style="margin-top: 20px;">🏦 Banking Architecture Decision Matrix</h3>
+    <div class="grid-3">
+        <div class="card blue">
+            <h4>Choose RAG When:</h4>
+            <ul style="font-size: 0.9em;">
+                <li>Policy/procedure Q&A</li>
+                <li>Product information lookup</li>
+                <li>Compliance document search</li>
+                <li>Knowledge changes frequently</li>
+                <li>Need citation/source tracking</li>
+            </ul>
+        </div>
+        <div class="card green">
+            <h4>Choose SLM When:</h4>
+            <ul style="font-size: 0.9em;">
+                <li>Intent classification (10K+ req/min)</li>
+                <li>Entity extraction (names, amounts)</li>
+                <li>Sentiment analysis</li>
+                <li>Data privacy requires on-premise</li>
+                <li>Latency < 100ms required</li>
+            </ul>
+        </div>
+        <div class="card purple">
+            <h4>Choose MCP When:</h4>
+            <ul style="font-size: 0.9em;">
+                <li>Real-time account data needed</li>
+                <li>Multi-system orchestration</li>
+                <li>Transaction execution</li>
+                <li>Dynamic tool selection</li>
+                <li>Agent needs to "act" not just "answer"</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="tip-box" style="margin-top: 15px;">
+        <span class="icon">💡</span>
+        <div>
+            <strong>Hybrid Pattern:</strong> Most production banking agents combine all three: SLM for routing → RAG for knowledge → MCP for actions. Example: Classify intent (SLM) → Lookup policy (RAG) → Execute transfer (MCP).
+        </div>
+    </div>
+</div>
+
+
+<!-- SLIDE 5: Vector DB Decision Guide -->
+<div class="slide">
+    <h1>🗄️ Vector DB vs Traditional DB: Decision Guide</h1>
+    <p class="subtitle">When to Use Vector Databases in Banking AI Solutions</p>
+
+    <div class="tree-container">
+        <div class="tree-row">
+            <div class="tree-node tree-decision">🤔 What type of search do you need?</div>
+        </div>
+        <div class="tree-connector">↙️ Exact Match / Structured &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Semantic / Similarity ↘️</div>
+        <div class="tree-branch">
+            <div style="text-align: center;">
+                <div class="tree-node" style="background: #e6f7ff; border: 2px solid #0078d4;">🗃️ <strong>Traditional DB</strong></div>
+                <div style="margin-top: 10px; font-size: 0.9em; background: #f0f8ff; padding: 12px; border-radius: 8px;">
+                    SQL Server, Cosmos DB (SQL API)<br>
+                    <strong>Use for:</strong> Account lookup, transaction history, exact filters
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div class="tree-node tree-decision">🤔 Data volume?</div>
+                <div class="tree-connector" style="font-size: 1em;">↙️ < 100K docs &nbsp;&nbsp;&nbsp;&nbsp; > 100K docs ↘️</div>
+                <div class="tree-branch" style="gap: 20px;">
+                    <div>
+                        <div class="tree-node" style="background: #dff6dd; border: 2px solid #107c10;">📁 <strong>In-Memory (FAISS)</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.85em; background: #f0fff0; padding: 10px; border-radius: 8px;">
+                            Fast, no infra cost<br>
+                            Good for POC/dev
+                        </div>
+                    </div>
+                    <div>
+                        <div class="tree-node" style="background: #f8f0ff; border: 2px solid #8764b8;">🔍 <strong>Azure AI Search</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.85em; background: #f8f0ff; padding: 10px; border-radius: 8px;">
+                            Hybrid search, filters<br>
+                            Production-ready
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 25px;">Database Selection by Use Case</h3>
+    <table style="font-size: 0.9em;">
+        <tr>
+            <th>Use Case</th>
+            <th>Query Type</th>
+            <th>Recommended DB</th>
+            <th>Why</th>
+        </tr>
+        <tr>
+            <td>Account Balance Lookup</td>
+            <td>Exact match (account_id)</td>
+            <td><span class="highlight">SQL / Cosmos DB</span></td>
+            <td>Structured query, ACID transactions</td>
+        </tr>
+        <tr>
+            <td>Transaction History</td>
+            <td>Range query (date, amount)</td>
+            <td><span class="highlight">SQL / Cosmos DB</span></td>
+            <td>Filtering, sorting, pagination</td>
+        </tr>
+        <tr>
+            <td>Policy Q&A</td>
+            <td>Semantic similarity</td>
+            <td><span class="highlight purple">Azure AI Search</span></td>
+            <td>"How do I dispute a charge?" needs semantic understanding</td>
+        </tr>
+        <tr>
+            <td>Product Recommendations</td>
+            <td>Similarity + filters</td>
+            <td><span class="highlight purple">Azure AI Search</span></td>
+            <td>Hybrid: semantic match + eligibility filters</td>
+        </tr>
+        <tr>
+            <td>Fraud Pattern Detection</td>
+            <td>Anomaly / similarity</td>
+            <td><span class="highlight purple">Vector DB + SQL</span></td>
+            <td>Find similar past fraud cases + structured rules</td>
+        </tr>
+        <tr>
+            <td>Customer Preferences</td>
+            <td>Key-value lookup</td>
+            <td><span class="highlight green">Cosmos DB / Redis</span></td>
+            <td>Fast reads, JSON flexibility</td>
+        </tr>
+        <tr>
+            <td>Conversation Memory</td>
+            <td>Recent + semantic recall</td>
+            <td><span class="highlight purple">Cosmos DB + Vector</span></td>
+            <td>Short-term (recent) + long-term (semantic)</td>
+        </tr>
+    </table>
+
+    <div class="grid-2" style="margin-top: 20px;">
+        <div class="warning-box">
+            <span class="icon">⚠️</span>
+            <div>
+                <strong>Common Mistake:</strong> Using vector DB for everything. Vector search is expensive (~$0.001/query). Use traditional DB for exact matches, reserve vector for semantic search.
+            </div>
+        </div>
+        <div class="success-box">
+            <span class="icon">✅</span>
+            <div>
+                <strong>Best Practice:</strong> Hybrid architecture - SQL for transactions, Vector for knowledge, Redis for session. Route queries to appropriate store.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- SLIDE 6: Day 2 Agenda -->
+<div class="slide">
+    <h1>📋 Day 2: Frameworks & Production Agenda</h1>
+    <p class="subtitle">Implementing Agent Architectures on Azure</p>
+    
+    <table>
+        <tr><th>Module</th><th>Topic</th><th>Theory</th><th>Lab</th><th>Notebook</th></tr>
+        <tr><td><span class="highlight purple">5</span></td><td>Framework Deep Dive (SK, LangChain, AutoGen, CrewAI)</td><td>30 min</td><td>30 min</td><td><code>05_semantic_kernel_agent.ipynb</code></td></tr>
+        <tr><td><span class="highlight purple">6</span></td><td>Tool Orchestration</td><td>25 min</td><td>25 min</td><td><code>07_tool_orchestration.ipynb</code></td></tr>
+        <tr><td><span class="highlight">7</span></td><td>Azure-Native Architecture</td><td>25 min</td><td>20 min</td><td><code>06_azure_ai_foundry.ipynb</code></td></tr>
+        <tr><td><span class="highlight green">8</span></td><td>Multi-Agent Patterns (Sequential, Supervisor, Reflection)</td><td>30 min</td><td>30 min</td><td><code>16_multi_agent_patterns.ipynb</code></td></tr>
+        <tr><td><span class="highlight green">9</span></td><td>Workflow Orchestration (Durable Functions, Logic Apps)</td><td>25 min</td><td>25 min</td><td><code>17_workflow_orchestration.ipynb</code></td></tr>
+        <tr><td><span class="highlight orange">10</span></td><td>Event-Driven vs Always-On</td><td>20 min</td><td>15 min</td><td>—</td></tr>
+        <tr><td><span class="highlight orange">11</span></td><td>Production Resilience & Cost Optimization</td><td>20 min</td><td>15 min</td><td><code>08_resilience_patterns.ipynb</code></td></tr>
+        <tr><td><span class="highlight red">12</span></td><td>Agent Evaluation & Observability</td><td>25 min</td><td>20 min</td><td><code>18_agent_evaluation.ipynb</code></td></tr>
+    </table>
+
+    <div class="grid-2" style="margin-top: 20px;">
+        <div class="card green">
+            <h4>🎯 Day 2 Learning Objectives</h4>
+            <ul>
+                <li>Compare and select agent frameworks</li>
+                <li>Implement multi-agent patterns (Sequential, Supervisor, Reflection)</li>
+                <li>Orchestrate workflows with Durable Functions & Logic Apps</li>
+                <li>Evaluate agents and integrate Azure Monitor</li>
+            </ul>
+        </div>
+        <div class="card orange">
+            <h4>🏦 Banking Scenarios Today</h4>
+            <ul>
+                <li>Employee onboarding crew (Sequential)</li>
+                <li>Sales analyst + researcher team (Supervisor)</li>
+                <li>Ad copy writer + critic (Reflection)</li>
+                <li>Adaptive RAG with multi-agent systems</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="card blue" style="margin-top: 15px;">
+        <h4>🔗 Azure Documentation</h4>
+        <ul style="column-count: 2;">
+            <li><a href="https://learn.microsoft.com/azure/ai-services/openai/concepts/models" target="_blank">Azure OpenAI Models</a></li>
+            <li><a href="https://learn.microsoft.com/azure/azure-functions/durable/" target="_blank">Azure Durable Functions</a></li>
+            <li><a href="https://learn.microsoft.com/azure/logic-apps/" target="_blank">Azure Logic Apps</a></li>
+            <li><a href="https://learn.microsoft.com/azure/azure-monitor/" target="_blank">Azure Monitor</a></li>
+            <li><a href="https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview" target="_blank">Application Insights</a></li>
+            <li><a href="https://learn.microsoft.com/semantic-kernel/overview/" target="_blank">Semantic Kernel</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- SLIDE 3: Module 5 - Framework Overview -->
+<div class="slide">
+    <span class="module-badge">Module 5 - Theory</span>
+    <span class="time-badge">30 Minutes</span>
+    <h1>🔧 Framework Deep Dive</h1>
+    <p class="subtitle">Semantic Kernel, LangChain, AutoGen, CrewAI - When to Use What</p>
+
+    <h3>Framework Comparison</h3>
+    <table>
+        <tr>
+            <th>Framework</th>
+            <th>Best For</th>
+            <th>Azure Integration</th>
+            <th>Learning Curve</th>
+            <th>Production Ready</th>
+        </tr>
+        <tr>
+            <td><strong>Semantic Kernel</strong></td>
+            <td>Enterprise, .NET/Python</td>
+            <td><span class="highlight green">Native</span></td>
+            <td>Medium</td>
+            <td><span class="highlight green">Yes</span></td>
+        </tr>
+        <tr>
+            <td><strong>LangChain</strong></td>
+            <td>Rapid prototyping, flexibility</td>
+            <td><span class="highlight orange">Good</span></td>
+            <td>Low</td>
+            <td><span class="highlight orange">Maturing</span></td>
+        </tr>
+        <tr>
+            <td><strong>AutoGen</strong></td>
+            <td>Multi-agent conversations</td>
+            <td><span class="highlight green">Native</span></td>
+            <td>Medium</td>
+            <td><span class="highlight green">Yes</span></td>
+        </tr>
+        <tr>
+            <td><strong>CrewAI</strong></td>
+            <td>Role-based agent teams</td>
+            <td><span class="highlight">Partial</span></td>
+            <td>Low</td>
+            <td><span class="highlight orange">Maturing</span></td>
+        </tr>
+    </table>
+
+    <h3>What Frameworks Actually Do</h3>
+    <div class="pipeline">
+        <div class="pipeline-step blue">
+            <span class="pipeline-label">ABSTRACTION</span>
+            🔌 LLM Connection
+            <small>API handling</small>
+        </div>
+        <div class="pipeline-step purple">
+            <span class="pipeline-label">ABSTRACTION</span>
+            🔧 Tool Management
+            <small>Registration, calling</small>
+        </div>
+        <div class="pipeline-step orange">
+            <span class="pipeline-label">ABSTRACTION</span>
+            🧠 Memory
+            <small>Context, history</small>
+        </div>
+        <div class="pipeline-step green">
+            <span class="pipeline-label">ABSTRACTION</span>
+            🔄 Orchestration
+            <small>Loops, chains</small>
+        </div>
+    </div>
+
+    <div class="tip-box">
+        <span class="icon">💡</span>
+        <div>
+            <strong>Key Insight:</strong> Frameworks are abstractions over the same underlying capabilities. You can build the same agent with any framework - the difference is developer experience and ecosystem.
+        </div>
+    </div>
+</div>
+
+
+<!-- SLIDE 4: Framework Decision Tree -->
+<div class="slide">
+    <span class="module-badge">Module 4</span>
+    <h1>🌳 Decision Tree: Selecting a Framework</h1>
+    <p class="subtitle">Choose the Right Framework for Your Banking Project</p>
+
+    <div class="tree-container">
+        <div class="tree-row">
+            <div class="tree-node tree-decision">🤔 What's your primary language?</div>
+        </div>
+        <div class="tree-connector">↙️ .NET/C# &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Python ↘️</div>
+        <div class="tree-branch">
+            <div style="text-align: center;">
+                <div class="tree-node" style="background: #f8f0ff; border: 2px solid #8764b8;">🔮 <strong>Semantic Kernel</strong></div>
+                <div style="margin-top: 10px; font-size: 0.9em; background: #f8f0ff; padding: 12px; border-radius: 8px;">
+                    Native .NET support<br>
+                    Best Azure integration<br>
+                    Enterprise-grade
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div class="tree-node tree-decision">🤔 Multi-agent needed?</div>
+                <div class="tree-connector" style="font-size: 1em;">↙️ YES &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO ↘️</div>
+                <div class="tree-branch" style="gap: 20px;">
+                    <div>
+                        <div class="tree-node tree-decision" style="font-size: 0.9em;">Role-based teams?</div>
+                        <div class="tree-connector" style="font-size: 0.9em;">↙️ YES &nbsp;&nbsp; NO ↘️</div>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <div class="tree-node" style="background: #fff8f0; border: 2px solid #ff8c00; font-size: 0.85em;">🚀 CrewAI</div>
+                            <div class="tree-node" style="background: #dff6dd; border: 2px solid #107c10; font-size: 0.85em;">🤖 AutoGen</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="tree-node tree-decision" style="font-size: 0.9em;">Rapid prototype?</div>
+                        <div class="tree-connector" style="font-size: 0.9em;">↙️ YES &nbsp;&nbsp; NO ↘️</div>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <div class="tree-node" style="background: #e6f7ff; border: 2px solid #0078d4; font-size: 0.85em;">🦜 LangChain</div>
+                            <div class="tree-node" style="background: #f8f0ff; border: 2px solid #8764b8; font-size: 0.85em;">🔮 Semantic Kernel</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 20px;">
+        <div class="card purple">
+            <h4>🏦 Banking Recommendation</h4>
+            <p><strong>For most banking projects:</strong> Start with <strong>Semantic Kernel</strong></p>
+            <ul>
+                <li>Native Azure integration (Managed Identity, Key Vault)</li>
+                <li>Enterprise support from Microsoft</li>
+                <li>Strong typing for compliance</li>
+            </ul>
+        </div>
+        <div class="card orange">
+            <h4>⚠️ When to Use LangChain</h4>
+            <ul>
+                <li>Rapid prototyping / POC</li>
+                <li>Need specific LangChain integrations</li>
+                <li>Team already has LangChain expertise</li>
+                <li>Non-Azure deployment target</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5: Same Agent - Two Frameworks -->
+<div class="slide">
+    <span class="module-badge">Module 4</span>
+    <h1>⚖️ Same Agent: LangChain vs Semantic Kernel</h1>
+    <p class="subtitle">50/50 Comparison - Fraud Investigation Agent</p>
+
+    <div class="compare-container">
+        <div class="compare-card">
+            <div class="compare-header" style="background: linear-gradient(135deg, #1a5f2a, #2d8a3e);">
+                <h3 style="margin: 0; color: white;">🦜 LangChain</h3>
+            </div>
+            <div class="compare-body">
+                <div class="code-block" style="font-size: 0.8em;"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> create_openai_tools_agent
+<span class="keyword">from</span> langchain_openai <span class="keyword">import</span> AzureChatOpenAI
+
+llm = AzureChatOpenAI(
+    azure_deployment=<span class="string">"gpt-4o"</span>,
+    api_version=<span class="string">"2024-06-01"</span>
+)
+
+tools = [get_transactions, get_account_changes]
+
+agent = create_openai_tools_agent(
+    llm=llm,
+    tools=tools,
+    prompt=fraud_prompt
+)
+
+<span class="comment"># Run investigation</span>
+result = agent.invoke({
+    <span class="string">"input"</span>: <span class="string">"Investigate alert C-789"</span>
+})</div>
+                <div style="margin-top: 10px;">
+                    <span class="highlight green">✓</span> Fewer lines of code<br>
+                    <span class="highlight green">✓</span> Quick to prototype<br>
+                    <span class="highlight orange">△</span> Less type safety
+                </div>
+            </div>
+        </div>
+        <div class="compare-card">
+            <div class="compare-header" style="background: linear-gradient(135deg, #8764b8, #6b4f91);">
+                <h3 style="margin: 0; color: white;">🔮 Semantic Kernel</h3>
+            </div>
+            <div class="compare-body">
+                <div class="code-block" style="font-size: 0.8em;"><span class="keyword">import</span> semantic_kernel <span class="keyword">as</span> sk
+<span class="keyword">from</span> semantic_kernel.connectors.ai.open_ai <span class="keyword">import</span> AzureChatCompletion
+
+kernel = sk.Kernel()
+kernel.add_service(AzureChatCompletion(
+    deployment_name=<span class="string">"gpt-4o"</span>,
+    endpoint=os.getenv(<span class="string">"AZURE_OPENAI_ENDPOINT"</span>),
+    api_key=os.getenv(<span class="string">"AZURE_OPENAI_KEY"</span>)
+))
+
+kernel.add_plugin(FraudPlugin(), <span class="string">"fraud"</span>)
+
+<span class="comment"># Run investigation</span>
+result = <span class="keyword">await</span> kernel.invoke_prompt(
+    <span class="string">"Investigate alert {{$alert_id}}"</span>,
+    alert_id=<span class="string">"C-789"</span>
+)</div>
+                <div style="margin-top: 10px;">
+                    <span class="highlight green">✓</span> Strong typing<br>
+                    <span class="highlight green">✓</span> Native Azure auth<br>
+                    <span class="highlight green">✓</span> Plugin architecture
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tip-box">
+        <span class="icon">💡</span>
+        <div>
+            <strong>Key Takeaway:</strong> Both frameworks produce the same result. Choose based on your team's expertise and deployment target, not framework hype.
+        </div>
+    </div>
+</div>
+
+
+<!-- SLIDE 6: Module 4 Lab -->
+<div class="slide">
+    <span class="lab-badge">Module 4 - Lab</span>
+    <span class="time-badge">30 Minutes</span>
+    <h1>🔬 Lab: Build Agent with Semantic Kernel</h1>
+    <p class="subtitle">Hands-On: Fraud Investigation Agent on Azure</p>
+
+    <div class="notebook-header">
+        <span>📓</span> <strong>05_semantic_kernel_agent.ipynb</strong> <span class="azure-badge" style="margin-left: auto;">Azure AI Foundry</span>
+    </div>
+    <div class="notebook-cell code"><span class="comment"># Setup Semantic Kernel with Azure OpenAI</span>
+!pip install semantic-kernel azure-identity --quiet
+
+<span class="keyword">import</span> semantic_kernel <span class="keyword">as</span> sk
+<span class="keyword">from</span> semantic_kernel.connectors.ai.open_ai <span class="keyword">import</span> AzureChatCompletion
+<span class="keyword">from</span> semantic_kernel.functions <span class="keyword">import</span> kernel_function
+
+kernel = sk.Kernel()
+kernel.add_service(AzureChatCompletion(
+    deployment_name=<span class="string">"gpt-4o"</span>,
+    endpoint=os.getenv(<span class="string">"AZURE_OPENAI_ENDPOINT"</span>),
+    api_key=os.getenv(<span class="string">"AZURE_OPENAI_KEY"</span>)
+))</div>
+
+    <div class="notebook-cell code"><span class="comment"># Define Banking Tools as SK Plugin</span>
+<span class="keyword">class</span> <span class="function">FraudInvestigationPlugin</span>:
+    
+    @kernel_function(description=<span class="string">"Get customer transaction history"</span>)
+    <span class="keyword">def</span> <span class="function">get_transactions</span>(self, customer_id: str, days: int = 90) -> str:
+        <span class="comment"># In production: call actual banking API</span>
+        <span class="keyword">return</span> json.dumps({
+            <span class="string">"customer_id"</span>: customer_id,
+            <span class="string">"avg_transaction"</span>: 2500,
+            <span class="string">"max_transaction"</span>: 8000,
+            <span class="string">"international_count"</span>: 0
+        })
+    
+    @kernel_function(description=<span class="string">"Get recent account changes"</span>)
+    <span class="keyword">def</span> <span class="function">get_account_changes</span>(self, customer_id: str) -> str:
+        <span class="keyword">return</span> json.dumps({
+            <span class="string">"email_changed"</span>: <span class="string">"3 days ago"</span>,
+            <span class="string">"phone_changed"</span>: <span class="string">"3 days ago"</span>,
+            <span class="string">"password_reset"</span>: <span class="string">"2 days ago"</span>
+        })
+
+kernel.add_plugin(FraudInvestigationPlugin(), <span class="string">"fraud"</span>)</div>
+
+    <div class="notebook-cell code"><span class="comment"># Run Fraud Investigation</span>
+settings = kernel.get_prompt_execution_settings_from_service_id(<span class="string">"default"</span>)
+settings.function_choice_behavior = FunctionChoiceBehavior.Auto()
+
+result = <span class="keyword">await</span> kernel.invoke_prompt(
+    <span class="string">"""You are a fraud investigator. Investigate this alert and provide a recommendation.
+    Alert: Customer C-789, Wire transfer $45,000 to overseas account.
+    Use available tools to gather information before making a recommendation."""</span>,
+    settings=settings
+)
+print(result)</div>
+    <div class="notebook-cell output"><span style="color: #d13438; font-weight: bold;">RECOMMENDATION: HIGH RISK - BLOCK IMMEDIATELY</span>
+
+Investigation findings:
+1. Transaction is 18x customer's average ($2,500)
+2. First international transfer in account history
+3. Multiple credential changes in past 3 days (email, phone, password)
+
+These indicators strongly suggest account takeover. Recommend:
+- Block the pending transfer
+- Contact customer via original phone number
+- Initiate fraud investigation case</div>
+
+    <div class="tip-box">
+        <span class="icon">🎯</span>
+        <div>
+            <strong>Exercise:</strong> Add a third tool <code>create_fraud_case</code> that creates a case in the fraud management system.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: Module 5 - Tool Orchestration -->
+<div class="slide">
+    <span class="module-badge">Module 5 - Theory</span>
+    <span class="time-badge">25 Minutes</span>
+    <h1>🛠️ Tool Orchestration</h1>
+    <p class="subtitle">Multi-Tool Workflows for Banking Agents</p>
+
+    <h3>Tool Orchestration Pipeline</h3>
+    <div class="pipeline">
+        <div class="pipeline-step blue">
+            <span class="pipeline-label">STEP 1</span>
+            📝 Parse Intent
+            <small>What tools needed?</small>
+        </div>
+        <div class="pipeline-step purple">
+            <span class="pipeline-label">STEP 2</span>
+            🔧 Select Tools
+            <small>LLM chooses</small>
+        </div>
+        <div class="pipeline-step orange">
+            <span class="pipeline-label">STEP 3</span>
+            📤 Extract Params
+            <small>From context</small>
+        </div>
+        <div class="pipeline-step green">
+            <span class="pipeline-label">STEP 4</span>
+            ⚡ Execute
+            <small>Call APIs</small>
+        </div>
+        <div class="pipeline-step red">
+            <span class="pipeline-label">STEP 5</span>
+            🔄 Handle Errors
+            <small>Retry/fallback</small>
+        </div>
+    </div>
+
+    <h3>🏦 Banking Tool Categories</h3>
+    <div class="grid-4">
+        <div style="text-align: center; padding: 15px; background: #e6f7ff; border-radius: 8px; border-top: 4px solid #0078d4;">
+            <div style="font-size: 1.5em;">📊</div>
+            <strong>Read-Only</strong>
+            <small style="display: block; margin-top: 5px;">Balance, history, profile</small>
+        </div>
+        <div style="text-align: center; padding: 15px; background: #dff6dd; border-radius: 8px; border-top: 4px solid #107c10;">
+            <div style="font-size: 1.5em;">✏️</div>
+            <strong>Write</strong>
+            <small style="display: block; margin-top: 5px;">Create ticket, update profile</small>
+        </div>
+        <div style="text-align: center; padding: 15px; background: #fff4ce; border-radius: 8px; border-top: 4px solid #ff8c00;">
+            <div style="font-size: 1.5em;">💰</div>
+            <strong>Financial</strong>
+            <small style="display: block; margin-top: 5px;">Transfer, payment (guarded)</small>
+        </div>
+        <div style="text-align: center; padding: 15px; background: #fde7e9; border-radius: 8px; border-top: 4px solid #d13438;">
+            <div style="font-size: 1.5em;">🔒</div>
+            <strong>Privileged</strong>
+            <small style="display: block; margin-top: 5px;">Account lock, fraud flag</small>
+        </div>
+    </div>
+
+    <div class="warning-box" style="margin-top: 20px;">
+        <span class="icon">⚠️</span>
+        <div>
+            <strong>Tool Security Principle:</strong> Never give agents direct access to financial tools without guardrails. Use approval workflows, amount limits, and confirmation steps.
+        </div>
+    </div>
+</div>
+
+
+<!-- SLIDE 8: Tool Selection Decision Tree -->
+<div class="slide">
+    <span class="module-badge">Module 5</span>
+    <h1>🌳 Decision Tree: Tool Permission Levels</h1>
+    <p class="subtitle">Determine What Tools an Agent Can Access</p>
+
+    <div class="tree-container">
+        <div class="tree-row">
+            <div class="tree-node tree-decision">🤔 Does the tool modify data?</div>
+        </div>
+        <div class="tree-connector">↙️ NO (Read-Only) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; YES (Write) ↘️</div>
+        <div class="tree-branch">
+            <div style="text-align: center;">
+                <div class="tree-node" style="background: #dff6dd; border: 2px solid #107c10;">✅ <strong>Allow Freely</strong></div>
+                <div style="margin-top: 10px; font-size: 0.9em; background: #f0fff0; padding: 12px; border-radius: 8px;">
+                    • get_balance<br>
+                    • get_transactions<br>
+                    • get_profile<br>
+                    • search_products
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div class="tree-node tree-decision">🤔 Financial impact?</div>
+                <div class="tree-connector" style="font-size: 1em;">↙️ NO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; YES ↘️</div>
+                <div class="tree-branch" style="gap: 20px;">
+                    <div>
+                        <div class="tree-node" style="background: #fff4ce; border: 2px solid #ff8c00;">⚠️ <strong>Allow with Logging</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.85em; background: #fff8f0; padding: 10px; border-radius: 8px;">
+                            • create_ticket<br>
+                            • update_preferences<br>
+                            • schedule_callback
+                        </div>
+                    </div>
+                    <div>
+                        <div class="tree-node" style="background: #fde7e9; border: 2px solid #d13438;">🚫 <strong>Require Approval</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.85em; background: #fff0f0; padding: 10px; border-radius: 8px;">
+                            • transfer_funds<br>
+                            • close_account<br>
+                            • change_limits
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Tool Guardrails Implementation</h3>
+    <div class="grid-3">
+        <div class="card green">
+            <h4>✅ Level 1: No Guardrails</h4>
+            <ul>
+                <li>Read-only operations</li>
+                <li>No PII exposure</li>
+                <li>Idempotent calls</li>
+            </ul>
+        </div>
+        <div class="card orange">
+            <h4>⚠️ Level 2: Logged + Limited</h4>
+            <ul>
+                <li>Full audit trail</li>
+                <li>Rate limiting</li>
+                <li>Anomaly detection</li>
+            </ul>
+        </div>
+        <div class="card red">
+            <h4>🚫 Level 3: Human Approval</h4>
+            <ul>
+                <li>Queue for review</li>
+                <li>Amount thresholds</li>
+                <li>Dual authorization</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 9: Module 6 - Azure Architecture -->
+<div class="slide">
+    <span class="module-badge">Module 6 - Theory</span>
+    <span class="time-badge">25 Minutes</span>
+    <h1>☁️ Azure-Native Agent Architecture</h1>
+    <p class="subtitle">Building on Azure AI Foundry & Azure OpenAI</p>
+
+    <div class="arch-container">
+        <!-- Presentation Layer -->
+        <div class="arch-layer layer-blue">
+            <span class="arch-layer-title">📱 PRESENTATION LAYER</span>
+            <div class="arch-services">
+                <div class="arch-service" style="border-top: 3px solid #0078d4;">
+                    <div class="arch-service-icon">🌐</div>
+                    <div class="arch-service-name">Web App</div>
+                    <div class="arch-service-desc">React / Angular</div>
+                </div>
+                <div class="arch-service" style="border-top: 3px solid #0078d4;">
+                    <div class="arch-service-icon">💬</div>
+                    <div class="arch-service-name">Teams Bot</div>
+                    <div class="arch-service-desc">Bot Service</div>
+                </div>
+                <div class="arch-service" style="border-top: 3px solid #0078d4;">
+                    <div class="arch-service-icon">📱</div>
+                    <div class="arch-service-name">Mobile API</div>
+                    <div class="arch-service-desc">API Management</div>
+                </div>
+                <div class="arch-service" style="border-top: 3px solid #0078d4;">
+                    <div class="arch-service-icon">🏢</div>
+                    <div class="arch-service-name">Portal</div>
+                    <div class="arch-service-desc">Power Apps</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="arch-connector">⬇️</div>
+        
+        <!-- Agent Layer -->
+        <div class="arch-layer layer-purple">
+            <span class="arch-layer-title">🤖 AGENT LAYER (Azure AI Foundry)</span>
+            <div class="arch-services" style="margin-bottom: 15px;">
+                <div class="arch-service" style="border-top: 3px solid #8764b8;">
+                    <div class="arch-service-icon">🎯</div>
+                    <div class="arch-service-name">Agent Service</div>
+                    <div class="arch-service-desc">Orchestration</div>
+                </div>
+                <div class="arch-service" style="border-top: 3px solid #8764b8;">
+                    <div class="arch-service-icon">🔄</div>
+                    <div class="arch-service-name">Prompt Flow</div>
+                    <div class="arch-service-desc">Workflows</div>
+                </div>
+                <div class="arch-service" style="border-top: 3px solid #8764b8;">
+                    <div class="arch-service-icon">📊</div>
+                    <div class="arch-service-name">Evaluations</div>
+                    <div class="arch-service-desc">Monitoring</div>
+                </div>
+            </div>
+            <div style="background: linear-gradient(135deg, #10a37f, #0d8a6a); color: white; padding: 15px; border-radius: 8px; text-align: center;">
+                <strong>Azure OpenAI Service</strong><br>
+                <span style="font-size: 0.85em; opacity: 0.9;">GPT-4o • GPT-4o-mini • o1-preview • Embeddings</span>
+            </div>
+        </div>
+        
+        <div class="arch-connector">⬇️</div>
+        
+        <!-- Data Layer -->
+        <div class="arch-layer layer-green">
+            <span class="arch-layer-title">💾 DATA & TOOLS LAYER</span>
+            <div class="arch-services">
+                <div class="arch-service" style="border-top: 3px solid #107c10;">
+                    <div class="arch-service-icon">🔍</div>
+                    <div class="arch-service-name">AI Search</div>
+                    <div class="arch-service-desc">Vector + Hybrid</div>
+                </div>
+                <div class="arch-service" style="border-top: 3px solid #107c10;">
+                    <div class="arch-service-icon">🗄️</div>
+                    <div class="arch-service-name">Cosmos DB</div>
+                    <div class="arch-service-desc">Memory Store</div>
+                </div>
+                <div class="arch-service" style="border-top: 3px solid #107c10;">
+                    <div class="arch-service-icon">⚡</div>
+                    <div class="arch-service-name">Functions</div>
+                    <div class="arch-service-desc">Tool Execution</div>
+                </div>
+                <div class="arch-service" style="border-top: 3px solid #1a472a;">
+                    <div class="arch-service-icon">🏦</div>
+                    <div class="arch-service-name">Core Banking</div>
+                    <div class="arch-service-desc">APIs</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- SLIDE 10: Azure Constraints -->
+<div class="slide">
+    <span class="module-badge">Module 6</span>
+    <h1>⚠️ Azure Constraints Deep Dive</h1>
+    <p class="subtitle">TPM, RPM, and Azure Functions Limits You Must Know</p>
+
+    <h3>Azure OpenAI Quotas</h3>
+    <table>
+        <tr>
+            <th>Model</th>
+            <th>TPM (Tokens/Min)</th>
+            <th>RPM (Requests/Min)</th>
+            <th>Max Context</th>
+            <th>Cost/1K tokens</th>
+        </tr>
+        <tr>
+            <td><strong>GPT-4o</strong></td>
+            <td>150K (default)</td>
+            <td>1,000</td>
+            <td>128K</td>
+            <td>$0.005 / $0.015</td>
+        </tr>
+        <tr>
+            <td><strong>GPT-4o-mini</strong></td>
+            <td>1M (default)</td>
+            <td>10,000</td>
+            <td>128K</td>
+            <td>$0.00015 / $0.0006</td>
+        </tr>
+        <tr>
+            <td><strong>o1-preview</strong></td>
+            <td>30K (limited)</td>
+            <td>500</td>
+            <td>128K</td>
+            <td>$0.015 / $0.060</td>
+        </tr>
+    </table>
+
+    <h3>Azure Functions Limits</h3>
+    <div class="grid-3">
+        <div class="card orange">
+            <h4>⏱️ Consumption Plan</h4>
+            <ul>
+                <li>Timeout: 10 min max</li>
+                <li>Memory: 1.5 GB</li>
+                <li>Cold start: 1-3 sec</li>
+            </ul>
+            <p style="margin-top: 10px;"><span class="highlight orange">Not for agents</span></p>
+        </div>
+        <div class="card green">
+            <h4>⚡ Premium Plan</h4>
+            <ul>
+                <li>Timeout: 60 min</li>
+                <li>Memory: 14 GB</li>
+                <li>No cold start</li>
+            </ul>
+            <p style="margin-top: 10px;"><span class="highlight green">Recommended</span></p>
+        </div>
+        <div class="card blue">
+            <h4>🏢 Dedicated Plan</h4>
+            <ul>
+                <li>Timeout: Unlimited</li>
+                <li>Memory: Per VM</li>
+                <li>Always warm</li>
+            </ul>
+            <p style="margin-top: 10px;"><span class="highlight">High volume</span></p>
+        </div>
+    </div>
+
+    <div class="danger-box" style="margin-top: 20px;">
+        <span class="icon">🚨</span>
+        <div>
+            <strong>Critical for Banking:</strong> A ReAct agent with 10 iterations can consume 50K+ tokens per request. At 150K TPM quota, you can only handle ~3 concurrent investigations. Plan capacity accordingly!
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 11: Module 7 - Event-Driven vs Always-On -->
+<div class="slide">
+    <span class="module-badge">Module 7 - Theory</span>
+    <span class="time-badge">20 Minutes</span>
+    <h1>⚡ Event-Driven vs Always-On Architecture</h1>
+    <p class="subtitle">Choosing the Right Pattern for Banking Agents</p>
+
+    <div class="compare-container">
+        <div class="compare-card">
+            <div class="compare-header" style="background: linear-gradient(135deg, #ff8c00, #e67e00);">
+                <h3 style="margin: 0; color: white;">⚡ Event-Driven</h3>
+                <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9em;">Azure Functions + Event Grid</p>
+            </div>
+            <div class="compare-body">
+                <div class="compare-item"><span class="compare-icon">💰</span> Pay per execution</div>
+                <div class="compare-item"><span class="compare-icon">📈</span> Auto-scales to zero</div>
+                <div class="compare-item"><span class="compare-icon">⏱️</span> Cold start latency</div>
+                <div class="compare-item"><span class="compare-icon">🎯</span> Best for: Batch, async tasks</div>
+                <div style="margin-top: 15px; padding: 10px; background: #fff8f0; border-radius: 8px;">
+                    <strong>Banking Use Cases:</strong><br>
+                    • Nightly fraud batch analysis<br>
+                    • Document processing queue<br>
+                    • Compliance report generation
+                </div>
+            </div>
+        </div>
+        <div class="compare-card">
+            <div class="compare-header" style="background: linear-gradient(135deg, #0078d4, #106ebe);">
+                <h3 style="margin: 0; color: white;">🔄 Always-On</h3>
+                <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9em;">App Service / Container Apps</p>
+            </div>
+            <div class="compare-body">
+                <div class="compare-item"><span class="compare-icon">💵</span> Fixed monthly cost</div>
+                <div class="compare-item"><span class="compare-icon">⚡</span> No cold start</div>
+                <div class="compare-item"><span class="compare-icon">🔌</span> WebSocket support</div>
+                <div class="compare-item"><span class="compare-icon">🎯</span> Best for: Real-time, interactive</div>
+                <div style="margin-top: 15px; padding: 10px; background: #f0f8ff; border-radius: 8px;">
+                    <strong>Banking Use Cases:</strong><br>
+                    • Customer service chatbot<br>
+                    • Real-time fraud alerts<br>
+                    • Interactive loan advisor
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tip-box" style="margin-top: 20px;">
+        <span class="icon">💡</span>
+        <div>
+            <strong>Hybrid Approach:</strong> Use Always-On for customer-facing agents (low latency required) and Event-Driven for background processing (cost optimization).
+        </div>
+    </div>
+</div>
+
+
+<!-- SLIDE 12: Architecture Decision Tree -->
+<div class="slide">
+    <span class="module-badge">Module 7</span>
+    <h1>🌳 Decision Tree: Event-Driven vs Always-On</h1>
+    <p class="subtitle">Choose the Right Hosting Pattern</p>
+
+    <div class="tree-container">
+        <div class="tree-row">
+            <div class="tree-node tree-decision">🤔 Is sub-second response required?</div>
+        </div>
+        <div class="tree-connector">↙️ YES &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO ↘️</div>
+        <div class="tree-branch">
+            <div style="text-align: center;">
+                <div class="tree-node" style="background: #e6f7ff; border: 2px solid #0078d4;">🔄 <strong>Always-On</strong></div>
+                <div style="margin-top: 10px; font-size: 0.9em; background: #f0f8ff; padding: 12px; border-radius: 8px;">
+                    App Service / Container Apps<br>
+                    <small>~$100-500/month</small>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div class="tree-node tree-decision">🤔 Predictable volume?</div>
+                <div class="tree-connector" style="font-size: 1em;">↙️ YES &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO ↘️</div>
+                <div class="tree-branch" style="gap: 20px;">
+                    <div>
+                        <div class="tree-node" style="background: #dff6dd; border: 2px solid #107c10;">⚡ <strong>Functions Premium</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.85em; background: #f0fff0; padding: 10px; border-radius: 8px;">
+                            Pre-warmed instances<br>
+                            <small>~$150-300/month</small>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="tree-node" style="background: #fff8f0; border: 2px solid #ff8c00;">⚡ <strong>Functions Consumption</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.85em; background: #fff8f0; padding: 10px; border-radius: 8px;">
+                            Pay per execution<br>
+                            <small>~$0.20/million exec</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>🏦 Banking Architecture Patterns</h3>
+    <div class="pipeline">
+        <div class="pipeline-step blue">
+            <span class="pipeline-label">ALWAYS-ON</span>
+            💬 Customer Chat
+            <small>Real-time</small>
+        </div>
+        <div class="pipeline-step orange">
+            <span class="pipeline-label">EVENT-DRIVEN</span>
+            📄 Doc Processing
+            <small>Queue-based</small>
+        </div>
+        <div class="pipeline-step purple">
+            <span class="pipeline-label">SCHEDULED</span>
+            📊 Batch Analysis
+            <small>Nightly</small>
+        </div>
+        <div class="pipeline-step green">
+            <span class="pipeline-label">HYBRID</span>
+            🔔 Fraud Alerts
+            <small>Event → Agent</small>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 13: Module 8 - Production Resilience -->
+<div class="slide">
+    <span class="module-badge">Module 8 - Theory</span>
+    <span class="time-badge">20 Minutes</span>
+    <h1>🛡️ Production Resilience</h1>
+    <p class="subtitle">Error Handling, Fallbacks, and Confidence-Based Branching</p>
+
+    <h3>Resilience Pipeline</h3>
+    <div class="pipeline">
+        <div class="pipeline-step blue">
+            <span class="pipeline-label">LAYER 1</span>
+            🔄 Retry
+            <small>Transient errors</small>
+        </div>
+        <div class="pipeline-step purple">
+            <span class="pipeline-label">LAYER 2</span>
+            🔀 Fallback Model
+            <small>GPT-4o → mini</small>
+        </div>
+        <div class="pipeline-step orange">
+            <span class="pipeline-label">LAYER 3</span>
+            📊 Confidence Check
+            <small>Threshold routing</small>
+        </div>
+        <div class="pipeline-step green">
+            <span class="pipeline-label">LAYER 4</span>
+            👤 Human Escalation
+            <small>Low confidence</small>
+        </div>
+        <div class="pipeline-step red">
+            <span class="pipeline-label">LAYER 5</span>
+            🚨 Circuit Breaker
+            <small>System protection</small>
+        </div>
+    </div>
+
+    <h3>Confidence-Based Routing</h3>
+    <div class="vsteps" style="max-width: 600px;">
+        <div class="vstep">
+            <div class="vstep-num" style="background: #107c10;">90%+</div>
+            <div class="vstep-content" style="background: #dff6dd; border-left: 4px solid #107c10;">
+                <h4>✅ Auto-Execute</h4>
+                <p>High confidence → Agent proceeds autonomously</p>
+            </div>
+        </div>
+        <div class="vstep-connector"></div>
+        <div class="vstep">
+            <div class="vstep-num" style="background: #ff8c00;">70-90%</div>
+            <div class="vstep-content" style="background: #fff8f0; border-left: 4px solid #ff8c00;">
+                <h4>⚠️ Soft Confirmation</h4>
+                <p>Medium confidence → Ask user to confirm</p>
+            </div>
+        </div>
+        <div class="vstep-connector"></div>
+        <div class="vstep">
+            <div class="vstep-num" style="background: #d13438;">&lt;70%</div>
+            <div class="vstep-content" style="background: #fde7e9; border-left: 4px solid #d13438;">
+                <h4>🚫 Human Escalation</h4>
+                <p>Low confidence → Route to human agent</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="warning-box" style="margin-top: 20px;">
+        <span class="icon">⚠️</span>
+        <div>
+            <strong>Banking Requirement:</strong> Always implement human escalation for financial decisions. Regulators expect explainable decision paths with human oversight capability.
+        </div>
+    </div>
+</div>
+
+
+<!-- SLIDE 14: Module 8 Lab -->
+<div class="slide">
+    <span class="lab-badge">Module 8 - Lab</span>
+    <span class="time-badge">15 Minutes</span>
+    <h1>🔬 Lab: Implement Resilient Agent</h1>
+    <p class="subtitle">Hands-On: Retry, Fallback, and Confidence Routing</p>
+
+    <div class="notebook-header">
+        <span>📓</span> <strong>08_resilience_patterns.ipynb</strong> <span class="colab-badge" style="margin-left: auto;">Open in Colab</span>
+    </div>
+    <div class="notebook-cell code"><span class="comment"># Resilient Agent with Fallback and Confidence Routing</span>
+<span class="keyword">import</span> tenacity
+<span class="keyword">from</span> tenacity <span class="keyword">import</span> retry, stop_after_attempt, wait_exponential
+
+<span class="keyword">class</span> <span class="function">ResilientAgent</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.primary_model = <span class="string">"gpt-4o"</span>
+        self.fallback_model = <span class="string">"gpt-4o-mini"</span>
+        self.confidence_threshold = 0.7
+    
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=10))
+    <span class="keyword">def</span> <span class="function">_call_llm</span>(self, model: str, messages: list) -> dict:
+        <span class="string">"""Retry with exponential backoff"""</span>
+        <span class="keyword">return</span> client.chat.completions.create(model=model, messages=messages)
+    
+    <span class="keyword">def</span> <span class="function">invoke</span>(self, query: str) -> dict:
+        <span class="keyword">try</span>:
+            <span class="comment"># Try primary model</span>
+            response = self._call_llm(self.primary_model, [{<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: query}])
+        <span class="keyword">except</span> Exception:
+            <span class="comment"># Fallback to cheaper model</span>
+            response = self._call_llm(self.fallback_model, [{<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: query}])
+        
+        <span class="comment"># Extract confidence and route accordingly</span>
+        confidence = self._extract_confidence(response)
+        
+        <span class="keyword">if</span> confidence >= 0.9:
+            <span class="keyword">return</span> {<span class="string">"action"</span>: <span class="string">"auto_execute"</span>, <span class="string">"response"</span>: response}
+        <span class="keyword">elif</span> confidence >= 0.7:
+            <span class="keyword">return</span> {<span class="string">"action"</span>: <span class="string">"confirm_with_user"</span>, <span class="string">"response"</span>: response}
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> {<span class="string">"action"</span>: <span class="string">"escalate_to_human"</span>, <span class="string">"response"</span>: response}</div>
+
+    <div class="notebook-cell code"><span class="comment"># Test Resilient Agent</span>
+agent = ResilientAgent()
+
+<span class="comment"># High confidence case</span>
+result = agent.invoke(<span class="string">"What is my account balance?"</span>)
+print(f<span class="string">"Action: {result['action']}"</span>)  <span class="comment"># auto_execute</span>
+
+<span class="comment"># Low confidence case</span>
+result = agent.invoke(<span class="string">"Should I invest my savings in crypto?"</span>)
+print(f<span class="string">"Action: {result['action']}"</span>)  <span class="comment"># escalate_to_human</span></div>
+    <div class="notebook-cell output">Query: "What is my account balance?"
+Action: auto_execute ✅
+Confidence: 0.95
+
+Query: "Should I invest my savings in crypto?"
+Action: escalate_to_human 👤
+Confidence: 0.45
+Reason: Financial advice requires human judgment</div>
+
+    <div class="tip-box">
+        <span class="icon">🎯</span>
+        <div>
+            <strong>Exercise:</strong> Add a circuit breaker that stops calling the LLM after 5 consecutive failures in 1 minute.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 15: Module 9 - Cost Optimization -->
+<div class="slide">
+    <span class="module-badge">Module 9 - Theory</span>
+    <span class="time-badge">20 Minutes</span>
+    <h1>💰 Constraints & Cost Optimization</h1>
+    <p class="subtitle">Managing Azure OpenAI Costs in Production</p>
+
+    <h3>Cost Optimization Strategies</h3>
+    <div class="grid-3">
+        <div class="card green">
+            <h4>🎯 Model Selection</h4>
+            <ul>
+                <li>GPT-4o-mini for simple tasks</li>
+                <li>GPT-4o for complex reasoning</li>
+                <li>Route by task complexity</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>Savings: 90%+</strong></p>
+        </div>
+        <div class="card blue">
+            <h4>📦 Prompt Caching</h4>
+            <ul>
+                <li>Cache system prompts</li>
+                <li>Reuse common prefixes</li>
+                <li>Azure Redis Cache</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>Savings: 30-50%</strong></p>
+        </div>
+        <div class="card purple">
+            <h4>📊 Batch API</h4>
+            <ul>
+                <li>50% cost reduction</li>
+                <li>24-hour turnaround</li>
+                <li>Non-urgent processing</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>Savings: 50%</strong></p>
+        </div>
+    </div>
+
+    <h3>Cost Comparison: 10,000 Daily Agent Invocations</h3>
+    <table>
+        <tr>
+            <th>Strategy</th>
+            <th>Model Mix</th>
+            <th>Daily Cost</th>
+            <th>Monthly Cost</th>
+        </tr>
+        <tr>
+            <td>❌ All GPT-4o</td>
+            <td>100% GPT-4o</td>
+            <td>$150</td>
+            <td>$4,500</td>
+        </tr>
+        <tr>
+            <td>⚠️ Mixed Models</td>
+            <td>20% GPT-4o, 80% mini</td>
+            <td>$45</td>
+            <td>$1,350</td>
+        </tr>
+        <tr>
+            <td>✅ Optimized</td>
+            <td>Mixed + Caching + Batch</td>
+            <td>$20</td>
+            <td>$600</td>
+        </tr>
+    </table>
+
+    <div class="success-box" style="margin-top: 20px;">
+        <span class="icon">💡</span>
+        <div>
+            <strong>Banking Tip:</strong> Use GPT-4o-mini for customer FAQ, balance inquiries, and simple routing. Reserve GPT-4o for fraud investigation, complex underwriting, and regulatory analysis.
+        </div>
+    </div>
+</div>
+
+
+<!-- SLIDE 16: Model Selection Decision Tree -->
+<div class="slide">
+    <span class="module-badge">Module 9</span>
+    <h1>🌳 Decision Tree: Model Selection for Cost Optimization</h1>
+    <p class="subtitle">Route Tasks to the Right Model</p>
+
+    <div class="tree-container">
+        <div class="tree-row">
+            <div class="tree-node tree-decision">🤔 Does task require complex reasoning?</div>
+        </div>
+        <div class="tree-connector">↙️ NO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; YES ↘️</div>
+        <div class="tree-branch">
+            <div style="text-align: center;">
+                <div class="tree-node" style="background: #dff6dd; border: 2px solid #107c10;">💚 <strong>GPT-4o-mini</strong></div>
+                <div style="margin-top: 10px; font-size: 0.9em; background: #f0fff0; padding: 12px; border-radius: 8px;">
+                    <strong>$0.15/1M tokens</strong><br>
+                    • FAQ responses<br>
+                    • Balance inquiries<br>
+                    • Simple routing<br>
+                    • Data extraction
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div class="tree-node tree-decision">🤔 Is it time-sensitive?</div>
+                <div class="tree-connector" style="font-size: 1em;">↙️ YES &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO ↘️</div>
+                <div class="tree-branch" style="gap: 20px;">
+                    <div>
+                        <div class="tree-node" style="background: #f8f0ff; border: 2px solid #8764b8;">💜 <strong>GPT-4o</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.85em; background: #f8f0ff; padding: 10px; border-radius: 8px;">
+                            <strong>$5/1M tokens</strong><br>
+                            • Fraud investigation<br>
+                            • Real-time analysis
+                        </div>
+                    </div>
+                    <div>
+                        <div class="tree-node" style="background: #fff8f0; border: 2px solid #ff8c00;">🧡 <strong>Batch API</strong></div>
+                        <div style="margin-top: 10px; font-size: 0.85em; background: #fff8f0; padding: 10px; border-radius: 8px;">
+                            <strong>$2.50/1M (50% off)</strong><br>
+                            • Nightly reports<br>
+                            • Bulk processing
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>🏦 Banking Task → Model Mapping</h3>
+    <div class="pipeline">
+        <div class="pipeline-step green">
+            <span class="pipeline-label">GPT-4o-mini</span>
+            💬 Customer FAQ
+            <small>$0.15/1M</small>
+        </div>
+        <div class="pipeline-step green">
+            <span class="pipeline-label">GPT-4o-mini</span>
+            📊 Balance Check
+            <small>$0.15/1M</small>
+        </div>
+        <div class="pipeline-step purple">
+            <span class="pipeline-label">GPT-4o</span>
+            🔍 Fraud Analysis
+            <small>$5/1M</small>
+        </div>
+        <div class="pipeline-step orange">
+            <span class="pipeline-label">BATCH</span>
+            📋 Compliance Reports
+            <small>$2.50/1M</small>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 17: Production Checklist -->
+<div class="slide">
+    <h1>✅ Production Checklist</h1>
+    <p class="subtitle">Before Deploying Your Banking Agent</p>
+
+    <div class="grid-2">
+        <div class="card green">
+            <h4>🔒 Security</h4>
+            <ul>
+                <li>☐ Managed Identity for Azure services</li>
+                <li>☐ Key Vault for secrets</li>
+                <li>☐ Private endpoints enabled</li>
+                <li>☐ PII detection and masking</li>
+                <li>☐ Input validation and sanitization</li>
+            </ul>
+        </div>
+        <div class="card blue">
+            <h4>📊 Monitoring</h4>
+            <ul>
+                <li>☐ Application Insights configured</li>
+                <li>☐ Token usage tracking</li>
+                <li>☐ Latency percentiles (p50, p95, p99)</li>
+                <li>☐ Error rate alerts</li>
+                <li>☐ Cost anomaly detection</li>
+            </ul>
+        </div>
+        <div class="card orange">
+            <h4>🛡️ Resilience</h4>
+            <ul>
+                <li>☐ Retry with exponential backoff</li>
+                <li>☐ Model fallback configured</li>
+                <li>☐ Circuit breaker implemented</li>
+                <li>☐ Graceful degradation path</li>
+                <li>☐ Human escalation workflow</li>
+            </ul>
+        </div>
+        <div class="card purple">
+            <h4>📋 Compliance</h4>
+            <ul>
+                <li>☐ Audit logging enabled</li>
+                <li>☐ Decision reasoning captured</li>
+                <li>☐ Data retention policies</li>
+                <li>☐ GDPR/CCPA compliance</li>
+                <li>☐ Model card documentation</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="warning-box" style="margin-top: 20px;">
+        <span class="icon">⚠️</span>
+        <div>
+            <strong>Before Go-Live:</strong> Conduct load testing at 2x expected peak volume. Verify quota limits can handle burst traffic. Test failover scenarios.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 18: Day 2 Summary -->
+<div class="slide">
+    <h1>📋 Day 2 Summary: Production Ready</h1>
+    <p class="subtitle">Key Concepts for Building Banking Agents on Azure</p>
+
+    <div class="grid-2">
+        <div class="card purple">
+            <h4>🔧 Modules 5-7: Frameworks & Azure</h4>
+            <ul>
+                <li>Semantic Kernel, LangChain, AutoGen, CrewAI</li>
+                <li>Tool orchestration and permission levels</li>
+                <li>Azure AI Foundry architecture</li>
+            </ul>
+        </div>
+        <div class="card green">
+            <h4>👥 Module 8: Multi-Agent Patterns</h4>
+            <ul>
+                <li>Sequential (employee onboarding)</li>
+                <li>Supervisor (sales analyst team)</li>
+                <li>Reflection (writer + critic)</li>
+            </ul>
+        </div>
+        <div class="card blue">
+            <h4>⚙️ Module 9: Workflow Orchestration</h4>
+            <ul>
+                <li>Azure Durable Functions</li>
+                <li>Logic Apps for visual workflows</li>
+                <li>Adaptive RAG with multi-agent</li>
+            </ul>
+        </div>
+        <div class="card orange">
+            <h4>⚡ Modules 10-11: Production</h4>
+            <ul>
+                <li>Event-driven vs Always-on</li>
+                <li>Resilience patterns</li>
+                <li>Cost optimization strategies</li>
+            </ul>
+        </div>
+        <div class="card red" style="grid-column: span 2;">
+            <h4>📊 Module 12: Evaluation & Observability</h4>
+            <ul style="column-count: 2;">
+                <li>Tool call accuracy measurement</li>
+                <li>Goal achievement evaluation</li>
+                <li>Azure Monitor integration</li>
+                <li>Application Insights for agents</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 15px; background: #f0f8ff;">
+        <h4>📓 Day 2 Notebooks Completed</h4>
+        <table style="margin: 10px 0; font-size: 0.9em;">
+            <tr><th>Notebook</th><th>Module</th><th>Topic</th></tr>
+            <tr><td><code>05_semantic_kernel_agent.ipynb</code></td><td>5</td><td>Semantic Kernel Framework</td></tr>
+            <tr><td><code>06_azure_ai_foundry.ipynb</code></td><td>7</td><td>Azure AI Foundry Deployment</td></tr>
+            <tr><td><code>07_tool_orchestration.ipynb</code></td><td>6</td><td>Multi-Tool Workflows</td></tr>
+            <tr><td><code>16_multi_agent_patterns.ipynb</code></td><td>8</td><td>Sequential, Supervisor, Reflection</td></tr>
+            <tr><td><code>17_workflow_orchestration.ipynb</code></td><td>9</td><td>Durable Functions, Logic Apps</td></tr>
+            <tr><td><code>08_resilience_patterns.ipynb</code></td><td>11</td><td>Retry, Fallback, Circuit Breaker</td></tr>
+            <tr><td><code>18_agent_evaluation.ipynb</code></td><td>12</td><td>Evaluation & Observability</td></tr>
+        </table>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px; padding: 25px; background: linear-gradient(135deg, #ff8c00, #e67e00); border-radius: 12px; color: white;">
+        <h2 style="color: white; border: none;">✅ Day 2 Complete!</h2>
+        <p style="font-size: 1.1em;">Tomorrow: Design Patterns, Model Selection & Fine-Tuning</p>
+    </div>
+
+    <div class="grid-3" style="margin-top: 20px;">
+        <div style="text-align: center;">
+            <div style="font-size: 2em;">📚</div>
+            <strong>Resources</strong><br>
+            <small><a href="https://learn.microsoft.com/azure/ai-studio/" target="_blank">Azure AI Foundry Docs</a></small>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 2em;">💻</div>
+            <strong>Code Samples</strong><br>
+            <small><a href="https://github.com/Azure-Samples/azure-openai-samples" target="_blank">GitHub Repository</a></small>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 2em;">🎓</div>
+            <strong>Day 3 Preview</strong><br>
+            <small>Fine-Tuning & RAG vs FT</small>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
