@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking AI Assignment - Day 1 (Jan 10th)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 50%, #1a5f2a 100%);
+            border-radius: 20px;
+            position: relative;
+        }
+        .header h1 { font-size: 2.5rem; margin-bottom: 15px; color: white; }
+        .header p { font-size: 1.2rem; color: rgba(255,255,255,0.9); max-width: 900px; margin: 0 auto; }
+        .header-badges { margin-top: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .header-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* Scenario Brief */
+        .scenario-brief {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%);
+            border: 2px solid #1a472a;
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 40px;
+        }
+        .scenario-brief h2 {
+            color: #90EE90;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .scenario-brief h2::before { content: "🏦"; font-size: 2rem; }
+        
+        .brief-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-top: 25px; }
+        .brief-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 25px;
+            border-left: 4px solid #1a472a;
+        }
+        .brief-section h4 {
+            color: #90EE90;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+        .brief-list { list-style: none; margin: 0; padding: 0; }
+        .brief-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .brief-list li:last-child { border-bottom: none; }
+        .brief-list li strong { color: #90EE90; }
+        
+        /* Section Cards */
+        .section { 
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); 
+            border-radius: 20px; 
+            margin-bottom: 30px; 
+            overflow: hidden;
+            border: 1px solid rgba(26,71,42,0.3);
+        }
+        .section-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+            background: rgba(26,71,42,0.1);
+        }
+        .section-header:hover { background: rgba(26,71,42,0.2); }
+        .section-header h3 { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            font-size: 1.4rem;
+            color: #90EE90;
+        }
+        .section-points { 
+            background: rgba(144,238,144,0.1); 
+            color: #90EE90; 
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .section-content { 
+            padding: 0 30px 30px; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+        }
+        
+        /* Requirements Grid */
+        .requirements-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            gap: 25px; 
+            margin: 25px 0; 
+        }
+        .requirement-card { 
+            background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%); 
+            border-radius: 16px; 
+            padding: 25px; 
+            border-left: 4px solid #1a472a; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .requirement-card h4 {
+            color: #90EE90;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .requirement-card ul { margin-left: 20px; line-height: 1.8; }
+        .requirement-card li { margin-bottom: 8px; }
+        
+        /* Tables */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 20px 0; 
+            font-size: 0.95rem; 
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        th, td { 
+            padding: 15px; 
+            text-align: left; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+        }
+        th { 
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%); 
+            color: #90EE90; 
+            font-weight: 600;
+        }
+        tr:hover td { background: rgba(255,255,255,0.03); }
+        
+        /* Code Snippet */
+        .code-snippet { 
+            background: #1e1e1e; 
+            color: #d4d4d4; 
+            padding: 20px; 
+            border-radius: 12px; 
+            font-family: 'Consolas', monospace; 
+            font-size: 0.9em; 
+            overflow-x: auto; 
+            margin: 20px 0; 
+            border-left: 4px solid #1a472a;
+        }
+        
+        /* Architecture Diagram */
+        .architecture-diagram { 
+            background: linear-gradient(135deg, rgba(26,71,42,0.1) 0%, rgba(45,90,61,0.05) 100%); 
+            padding: 30px; 
+            border-radius: 16px; 
+            text-align: center; 
+            margin: 25px 0; 
+            border: 2px dashed #1a472a; 
+        }
+        .architecture-diagram h4 { color: #90EE90; margin-bottom: 20px; font-size: 1.3rem; }
+        
+        /* Warning and Success Boxes */
+        .warning-box { 
+            background: linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(220,38,38,0.05) 100%); 
+            border: 1px solid rgba(239,68,68,0.3); 
+            padding: 20px; 
+            border-radius: 12px; 
+            margin: 20px 0; 
+        }
+        .warning-box::before { 
+            content: "⚠️ "; 
+            font-weight: bold; 
+            color: #ef4444; 
+        }
+        
+        .success-box { 
+            background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.05) 100%); 
+            border: 1px solid rgba(16,185,129,0.3); 
+            padding: 20px; 
+            border-radius: 12px; 
+            margin: 20px 0; 
+        }
+        .success-box::before { 
+            content: "✅ "; 
+            font-weight: bold; 
+            color: #10b981; 
+        }
+        
+        /* Hint Box */
+        .hint-box { 
+            background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(37,99,235,0.05) 100%); 
+            border: 1px solid rgba(59,130,246,0.3); 
+            padding: 20px; 
+            border-radius: 12px; 
+            margin: 20px 0; 
+        }
+        .hint-box::before { 
+            content: "💡 "; 
+            font-weight: bold; 
+            color: #3b82f6; 
+        }
+        .hint-box h5 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        /* Badges */
+        .badge { 
+            display: inline-block; 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            font-size: 0.8em; 
+            font-weight: bold; 
+            margin: 3px; 
+        }
+        .badge.critical { background: #ef4444; color: white; }
+        .badge.important { background: #f59e0b; color: white; }
+        .badge.optional { background: #3b82f6; color: white; }
+        .badge.banking { background: #1a472a; color: white; }
+        
+        /* Deliverable Lists */
+        .deliverable-list { 
+            background: linear-gradient(135deg, rgba(144,238,144,0.1) 0%, rgba(50,205,50,0.05) 100%); 
+            padding: 25px; 
+            border-radius: 12px; 
+            margin: 20px 0; 
+            border-left: 4px solid #90EE90;
+        }
+        .deliverable-list h4 { 
+            color: #90EE90; 
+            margin-bottom: 15px; 
+            font-size: 1.1rem;
+        }
+        .deliverable-list ul { 
+            margin-left: 20px; 
+            line-height: 1.8; 
+        }
+        .deliverable-list li { margin-bottom: 8px; }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .brief-grid { grid-template-columns: 1fr; }
+            .requirements-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏦 Banking AI Assignment - Day 1</h1>
+            <p>Agent Taxonomy, Planning Patterns & Memory Systems</p>
+            <div class="header-badges">
+                <span class="header-badge">📅 January 10th, 2025</span>
+                <span class="header-badge">🤖 Agent Foundations</span>
+                <span class="header-badge">🧠 Planning & Memory</span>
+                <span class="header-badge">⏱️ 4 Hours</span>
+            </div>
+        </div>
+
+        <!-- Scenario Brief -->
+        <div class="scenario-brief">
+            <h2>Scenario: CommunityFirst Credit Union - Loan Document Intelligence</h2>
+            <p style="margin-bottom: 25px; color: #ccc; font-size: 1.1rem;">📖 You are the AI Solutions Architect at CommunityFirst Credit Union, tasked with building an intelligent document processing system for personal loan applications.</p>
+            
+            <div class="brief-grid">
+                <div class="brief-section">
+                    <h4>🏦 Organization Profile</h4>
+                    <ul class="brief-list">
+                        <li><strong>Name:</strong> CommunityFirst Credit Union</li>
+                        <li><strong>Size:</strong> $2.8 billion in assets, 35 branches</li>
+                        <li><strong>Members:</strong> 180,000 active members</li>
+                        <li><strong>Staff:</strong> 850 employees (45 loan officers, 12 underwriters)</li>
+                        <li><strong>Loan Volume:</strong> 1,200 personal loan applications/month</li>
+                        <li><strong>Average Loan:</strong> $25,000 (range: $5K - $75K)</li>
+                        <li><strong>Current System:</strong> Legacy core banking system with manual processes</li>
+                    </ul>
+                </div>
+                
+                <div class="brief-section">
+                    <h4>😰 Current Challenges</h4>
+                    <ul class="brief-list">
+                        <li><strong>Manual Processing:</strong> 3-4 hours per application for document review</li>
+                        <li><strong>Error Rate:</strong> 12% of applications have data entry errors</li>
+                        <li><strong>Processing Time:</strong> 5-7 days (target: 24-48 hours)</li>
+                        <li><strong>Staff Burnout:</strong> High turnover in loan processing department</li>
+                        <li><strong>Member Complaints:</strong> 35% cite slow processing as main concern</li>
+                        <li><strong>Cost per Application:</strong> $180 (target: $60)</li>
+                    </ul>
+                </div>
+                
+                <div class="brief-section">
+                    <h4>📄 Document Types</h4>
+                    <ul class="brief-list">
+                        <li><strong>Income Documents:</strong> Pay stubs (last 3 months), W-2 forms</li>
+                        <li><strong>Bank Statements:</strong> 3 months of checking/savings statements</li>
+                        <li><strong>Identity:</strong> Driver's license, Social Security card</li>
+                        <li><strong>Employment:</strong> Employment verification letter</li>
+                        <li><strong>Debt Information:</strong> Credit card statements, existing loan statements</li>
+                        <li><strong>Volume:</strong> 8-12 documents per application, 40-60 pages total</li>
+                    </ul>
+                </div>
+                
+                <div class="brief-section">
+                    <h4>🎯 Success Criteria</h4>
+                    <ul class="brief-list">
+                        <li><strong>Processing Time:</strong> Reduce to 24-48 hours</li>
+                        <li><strong>Accuracy:</strong> 98%+ data extraction accuracy</li>
+                        <li><strong>Cost Reduction:</strong> 65% reduction in processing costs</li>
+                        <li><strong>Member Satisfaction:</strong> >4.5/5 rating on loan experience</li>
+                        <li><strong>Staff Efficiency:</strong> 70% reduction in manual data entry</li>
+                        <li><strong>Compliance:</strong> 100% regulatory compliance (NCUA, state regulations)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignment Overview -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>📋</span> Day 1 Assignment Overview</h3>
+                <span class="section-points">50 Points Total</span>
+            </div>
+            <div class="section-content">
+                <p style="font-size: 1.1rem; margin-bottom: 20px; line-height: 1.8;">Design and implement the foundational components of an intelligent document processing system. Focus on agent taxonomy, planning patterns, and memory systems that will form the backbone of the loan processing automation.</p>
+                
+                <div class="hint-box">
+                    <h5>General Design Approach:</h5>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>Start with Business Requirements:</strong> Always begin by understanding the specific banking use case and constraints</li>
+                        <li><strong>Think Azure-Native:</strong> Leverage Azure services for scalability, security, and integration</li>
+                        <li><strong>Design for Compliance:</strong> Consider NCUA regulations and audit requirements from the beginning</li>
+                        <li><strong>Plan for Scale:</strong> Design systems that can handle 1,200+ applications per month</li>
+                        <li><strong>Focus on Explainability:</strong> Ensure all decisions can be traced and explained for regulatory compliance</li>
+                    </ul>
+                </div>
+                
+                <table style="margin-top: 25px;">
+                    <tr>
+                        <th>Component</th>
+                        <th>Focus Area</th>
+                        <th>Points</th>
+                        <th>Time Allocation</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Agent Taxonomy Design</strong></td>
+                        <td>Autonomous, tool-using, collaborative agent classification</td>
+                        <td>15 points</td>
+                        <td>90 minutes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Planning Patterns</strong></td>
+                        <td>ReAct, Plan-Execute, Chain-of-Thought implementation</td>
+                        <td>20 points</td>
+                        <td>120 minutes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Memory Systems</strong></td>
+                        <td>Short-term, long-term, episodic memory architecture</td>
+                        <td>15 points</td>
+                        <td>90 minutes</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Part 1: Agent Taxonomy -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>🤖</span> Part 1: Agent Taxonomy Design</h3>
+                <span class="section-points">15 Points</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 20px;">Design three specialized agents for document processing, each representing a different category in the agent taxonomy. Classify and justify your design choices.</p>
+                
+                <div class="requirements-grid">
+                    <div class="requirement-card">
+                        <h4>🔍 Document Classifier Agent</h4>
+                        <ul>
+                            <li><strong>Type:</strong> Autonomous Agent</li>
+                            <li><strong>Function:</strong> Automatically classify incoming documents by type</li>
+                            <li><strong>Autonomy Level:</strong> High - operates independently without human intervention</li>
+                            <li><strong>Decision Making:</strong> Uses confidence thresholds to determine document types</li>
+                            <li><strong>Tools:</strong> Azure Document Intelligence, custom classification models</li>
+                            <li><strong>Output:</strong> Document type, confidence score, processing recommendations</li>
+                        </ul>
+                        <span class="badge critical">Autonomous</span>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>🔧 Data Extraction Agent</h4>
+                        <ul>
+                            <li><strong>Type:</strong> Tool-Using Agent</li>
+                            <li><strong>Function:</strong> Extract structured data from classified documents</li>
+                            <li><strong>Tool Integration:</strong> Azure Document Intelligence, OCR services, validation APIs</li>
+                            <li><strong>Capabilities:</strong> Handles multiple document formats and quality levels</li>
+                            <li><strong>Error Handling:</strong> Retry mechanisms for low-quality scans</li>
+                            <li><strong>Output:</strong> Structured JSON data with field-level confidence scores</li>
+                        </ul>
+                        <span class="badge important">Tool-Using</span>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>🤝 Validation Agent</h4>
+                        <ul>
+                            <li><strong>Type:</strong> Collaborative Agent</li>
+                            <li><strong>Function:</strong> Cross-validate extracted data for consistency and accuracy</li>
+                            <li><strong>Collaboration:</strong> Works with other agents and human reviewers</li>
+                            <li><strong>Validation Logic:</strong> Cross-references data across multiple documents</li>
+                            <li><strong>Human Interaction:</strong> Escalates complex cases to human reviewers</li>
+                            <li><strong>Output:</strong> Validation report with flagged inconsistencies</li>
+                        </ul>
+                        <span class="badge optional">Collaborative</span>
+                    </div>
+                </div>
+
+                <div class="deliverable-list">
+                    <h4>Part 1 Deliverables:</h4>
+                    <ul>
+                        <li><strong>Agent Taxonomy Document:</strong> Detailed classification of each agent with justification</li>
+                        <li><strong>Architecture Diagram:</strong> Visual representation of agent interactions and data flow</li>
+                        <li><strong>Decision Matrix:</strong> When to use autonomous vs tool-using vs collaborative patterns</li>
+                        <li><strong>Implementation Plan:</strong> Step-by-step approach for building each agent type</li>
+                    </ul>
+                </div>
+
+                <div class="hint-box">
+                    <h5>Design Hints for Agent Taxonomy:</h5>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>Autonomy Level:</strong> Consider decision-making authority - can the agent act independently or needs oversight?</li>
+                        <li><strong>Tool Integration:</strong> Think about which Azure services each agent needs and how they interact</li>
+                        <li><strong>Collaboration Patterns:</strong> Design how agents share information and coordinate decisions</li>
+                        <li><strong>Error Handling:</strong> Plan for confidence thresholds and escalation to human reviewers</li>
+                        <li><strong>Performance Metrics:</strong> Define measurable success criteria for each agent type</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Part 2: Planning Patterns -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>🧠</span> Part 2: Planning Patterns Implementation</h3>
+                <span class="section-points">20 Points</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 20px;">Implement three different planning patterns for document processing scenarios. Each pattern should demonstrate different reasoning approaches and decision-making strategies.</p>
+                
+                <div class="requirements-grid">
+                    <div class="requirement-card">
+                        <h4>🔄 ReAct Pattern - Complex Document Analysis</h4>
+                        <ul>
+                            <li><strong>Scenario:</strong> Processing a poor-quality scanned pay stub with missing information</li>
+                            <li><strong>Reasoning:</strong> "This appears to be a pay stub, but the employer name is partially obscured"</li>
+                            <li><strong>Action:</strong> Apply enhanced OCR with preprocessing filters</li>
+                            <li><strong>Observation:</strong> "Extracted 'ABC Corp' with 75% confidence"</li>
+                            <li><strong>Iteration:</strong> Continue reasoning-action cycles until acceptable confidence</li>
+                            <li><strong>Implementation:</strong> Azure OpenAI with structured prompting</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>📋 Plan-Execute Pattern - Loan Application Processing</h4>
+                        <ul>
+                            <li><strong>Scenario:</strong> Complete processing of a new loan application</li>
+                            <li><strong>Planning Phase:</strong> Analyze application, create processing plan based on document types</li>
+                            <li><strong>Execution Phase:</strong> Execute document classification, extraction, validation in sequence</li>
+                            <li><strong>Monitoring:</strong> Track progress and adjust plan based on intermediate results</li>
+                            <li><strong>Replanning:</strong> Modify approach if unexpected document types are encountered</li>
+                            <li><strong>Implementation:</strong> Azure Logic Apps with conditional branching</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>🔗 Chain-of-Thought - Income Verification</h4>
+                        <ul>
+                            <li><strong>Scenario:</strong> Verifying applicant's income across multiple documents</li>
+                            <li><strong>Step 1:</strong> "Extract monthly salary from pay stub: $4,200"</li>
+                            <li><strong>Step 2:</strong> "Calculate annual income: $4,200 × 12 = $50,400"</li>
+                            <li><strong>Step 3:</strong> "Compare with W-2 annual income: $49,800"</li>
+                            <li><strong>Step 4:</strong> "Difference is $600 (1.2%) - within acceptable range"</li>
+                            <li><strong>Implementation:</strong> Structured prompting with explicit reasoning steps</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="architecture-diagram">
+                    <h4>🔄 ReAct Pattern Design Flow</h4>
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: #ccc;">
+                        <strong>Input:</strong> Poor-quality document → 
+                        <strong>Reason:</strong> "Document quality is low, need enhancement" → 
+                        <strong>Act:</strong> Apply image preprocessing → 
+                        <strong>Observe:</strong> "Quality improved, confidence 75%" → 
+                        <strong>Reason:</strong> "Still below threshold, try OCR" → 
+                        <strong>Act:</strong> Execute OCR extraction → 
+                        <strong>Observe:</strong> "Extracted data, confidence 92%" → 
+                        <strong>Decision:</strong> Accept result or continue iteration
+                    </p>
+                </div>
+
+                <div class="deliverable-list">
+                    <h4>Part 2 Deliverables:</h4>
+                    <ul>
+                        <li><strong>ReAct Pattern Design:</strong> Detailed architectural diagram showing reasoning-action-observation cycles</li>
+                        <li><strong>Plan-Execute Framework:</strong> Complete planning and execution system design with monitoring architecture</li>
+                        <li><strong>Chain-of-Thought Design:</strong> Structured reasoning flow diagrams for income verification scenarios</li>
+                        <li><strong>Pattern Comparison Matrix:</strong> Analysis of when to use each planning pattern with decision criteria</li>
+                        <li><strong>Performance Design:</strong> Architecture for measuring and comparing pattern effectiveness</li>
+                    </ul>
+                </div>
+
+                <div class="hint-box">
+                    <h5>Design Hints for Planning Patterns:</h5>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>ReAct Pattern:</strong> Design iterative loops with clear reasoning steps, action selection, and observation evaluation</li>
+                        <li><strong>Plan-Execute:</strong> Separate planning phase (what to do) from execution phase (how to do it) with monitoring</li>
+                        <li><strong>Chain-of-Thought:</strong> Break complex reasoning into explicit, sequential steps that can be audited</li>
+                        <li><strong>Pattern Selection:</strong> Consider document complexity, processing time requirements, and explainability needs</li>
+                        <li><strong>Error Recovery:</strong> Design fallback strategies when patterns fail or confidence is low</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 3: Memory Systems -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>🧠</span> Part 3: Memory Systems Architecture</h3>
+                <span class="section-points">15 Points</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 20px;">Design and implement a comprehensive memory system that enables agents to learn from experience, remember successful strategies, and adapt their behavior over time.</p>
+                
+                <div class="requirements-grid">
+                    <div class="requirement-card">
+                        <h4>⚡ Short-term Memory</h4>
+                        <ul>
+                            <li><strong>Purpose:</strong> Store current application context and intermediate processing results</li>
+                            <li><strong>Scope:</strong> Single loan application processing session</li>
+                            <li><strong>Content:</strong> Document metadata, extraction results, validation status</li>
+                            <li><strong>Duration:</strong> Active during processing, cleared after completion</li>
+                            <li><strong>Implementation:</strong> In-memory cache with Redis for distributed scenarios</li>
+                            <li><strong>Use Case:</strong> Track progress through multi-step document processing</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>🗄️ Long-term Memory</h4>
+                        <ul>
+                            <li><strong>Purpose:</strong> Store learned patterns, successful strategies, and historical performance</li>
+                            <li><strong>Scope:</strong> Cross-application learning and optimization</li>
+                            <li><strong>Content:</strong> Document processing patterns, error resolution strategies</li>
+                            <li><strong>Duration:</strong> Persistent across sessions, with periodic cleanup</li>
+                            <li><strong>Implementation:</strong> Azure Cosmos DB with vector embeddings</li>
+                            <li><strong>Use Case:</strong> Improve processing accuracy based on historical successes</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>📚 Episodic Memory</h4>
+                        <ul>
+                            <li><strong>Purpose:</strong> Remember specific processing episodes and their outcomes</li>
+                            <li><strong>Scope:</strong> Individual application processing experiences</li>
+                            <li><strong>Content:</strong> Complete processing traces, decision points, outcomes</li>
+                            <li><strong>Duration:</strong> Long-term storage for audit and learning purposes</li>
+                            <li><strong>Implementation:</strong> Structured logging with Azure Log Analytics</li>
+                            <li><strong>Use Case:</strong> Audit trails and case-based reasoning for similar applications</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>🧠 Semantic Memory</h4>
+                        <ul>
+                            <li><strong>Purpose:</strong> Store domain knowledge about banking, regulations, and procedures</li>
+                            <li><strong>Scope:</strong> General banking and loan processing knowledge</li>
+                            <li><strong>Content:</strong> Regulatory requirements, document standards, validation rules</li>
+                            <li><strong>Duration:</strong> Persistent with regular updates for regulatory changes</li>
+                            <li><strong>Implementation:</strong> Knowledge graph with Azure AI Search</li>
+                            <li><strong>Use Case:</strong> Provide context and validation rules for document processing</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="architecture-diagram">
+                    <h4>🏗️ Memory System Architecture</h4>
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: #ccc;">
+                        <strong>Input Layer:</strong> Document Processing Events → 
+                        <strong>Memory Router:</strong> Classify and route to appropriate memory type → 
+                        <strong>Short-term:</strong> Redis Cache (session data) → 
+                        <strong>Long-term:</strong> Cosmos DB (patterns & strategies) → 
+                        <strong>Episodic:</strong> Log Analytics (complete traces) → 
+                        <strong>Semantic:</strong> AI Search (domain knowledge) → 
+                        <strong>Retrieval Layer:</strong> Context-aware memory access → 
+                        <strong>Agent Decision Making:</strong> Enhanced with memory context
+                    </p>
+                </div>
+
+                <div class="deliverable-list">
+                    <h4>Part 3 Deliverables:</h4>
+                    <ul>
+                        <li><strong>Memory Architecture Design:</strong> Complete architectural blueprint of all four memory types</li>
+                        <li><strong>System Integration Design:</strong> How memory system integrates with Azure services</li>
+                        <li><strong>Learning Algorithm Design:</strong> Conceptual framework for extracting patterns from experience</li>
+                        <li><strong>Retrieval Mechanism Design:</strong> Architecture for context-aware memory access and search</li>
+                        <li><strong>Performance Impact Analysis:</strong> Design for measuring memory system impact on agent decisions</li>
+                    </ul>
+                </div>
+
+                <div class="hint-box">
+                    <h5>Design Hints for Memory Systems:</h5>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>Memory Types:</strong> Design different storage strategies - Redis for speed, Cosmos DB for patterns, Logs for audit</li>
+                        <li><strong>Access Patterns:</strong> Consider how often each memory type is accessed and optimize accordingly</li>
+                        <li><strong>Learning Mechanisms:</strong> Design how agents extract and store successful patterns from experience</li>
+                        <li><strong>Context Awareness:</strong> Plan how memory retrieval adapts based on current processing context</li>
+                        <li><strong>Performance Trade-offs:</strong> Balance memory access speed vs storage capacity vs cost</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluation Criteria -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>📊</span> Day 1 Evaluation Criteria</h3>
+                <span class="section-points">50 Points Total</span>
+            </div>
+            <div class="section-content">
+                <table style="margin-top: 20px;">
+                    <tr>
+                        <th>Component</th>
+                        <th>Points</th>
+                        <th>Evaluation Criteria</th>
+                        <th>Success Metrics</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Agent Taxonomy</strong></td>
+                        <td>15</td>
+                        <td>Correct classification, clear justification, practical design</td>
+                        <td>3 agents properly classified, architecture diagram, decision matrix</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Planning Patterns</strong></td>
+                        <td>20</td>
+                        <td>Design quality, appropriate pattern selection, architectural completeness</td>
+                        <td>All 3 patterns designed, reasoning flows documented, comparison matrix</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Memory Systems</strong></td>
+                        <td>15</td>
+                        <td>Complete architecture, learning design, retrieval strategy</td>
+                        <td>4 memory types designed, learning framework, integration architecture</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Submission Requirements -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>📝</span> Day 1 Submission Requirements</h3>
+                <span class="section-points">Due: Jan 10th, 6 PM</span>
+            </div>
+            <div class="section-content">
+                <div class="deliverable-list">
+                    <h4>Required Deliverables:</h4>
+                    <ul>
+                        <li><strong>Technical Documentation:</strong> Complete system design with agent taxonomy, planning patterns, and memory architecture (PDF, 8-10 pages)</li>
+                        <li><strong>Architecture Diagrams:</strong> Visual representations of all system components and their interactions (Visio, Lucidchart, or similar)</li>
+                        <li><strong>Design Presentation:</strong> 8-minute presentation explaining design decisions and architectural choices (PowerPoint + video)</li>
+                        <li><strong>Decision Framework:</strong> Structured analysis of design alternatives and selection rationale (PDF, 3-5 pages)</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <strong>Important:</strong> Focus on architectural design and system thinking rather than implementation details. Quality of design reasoning and architectural completeness is the primary evaluation criteria.
+                </div>
+
+                <div class="hint-box">
+                    <h5>Azure Services Selection Guide:</h5>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>Agent Hosting:</strong> Azure Functions for serverless agents, Container Apps for complex agents</li>
+                        <li><strong>Memory Systems:</strong> Redis Cache (short-term), Cosmos DB (long-term), Log Analytics (episodic)</li>
+                        <li><strong>Document Processing:</strong> Azure Document Intelligence for extraction, Blob Storage for documents</li>
+                        <li><strong>AI Services:</strong> Azure OpenAI for reasoning, AI Search for knowledge retrieval</li>
+                        <li><strong>Orchestration:</strong> Logic Apps for workflows, Service Bus for messaging</li>
+                    </ul>
+                </div>
+
+                <div class="success-box">
+                    <strong>Bonus Points (5 points):</strong> Design an adaptive learning framework where agents can evolve their taxonomy classification and planning strategies based on performance feedback.
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Message -->
+        <div style="text-align: center; margin-top: 50px; padding: 40px; background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%); border-radius: 20px;">
+            <h2 style="color: #90EE90; margin-bottom: 20px; font-size: 2rem;">🎯 Day 1 Challenge</h2>
+            <p style="font-size: 1.2rem; margin: 20px 0; color: #e8e8e8; line-height: 1.8;">
+                Build the intelligent foundation that will power tomorrow's advanced multi-agent system. Your agent taxonomy, planning patterns, and memory systems will be the backbone of the complete solution.
+            </p>
+            <div style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px;">
+                <p style="color: #ccc; margin-top: 10px;">Prepare for Day 2: Multi-Agent Orchestration & RAG Systems</p>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
