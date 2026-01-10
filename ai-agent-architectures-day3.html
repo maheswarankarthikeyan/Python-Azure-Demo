@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Architectures - Day 3: Design Patterns, Models & Fine-Tuning</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 50%, #1a5f2a 100%); min-height: 100vh; }
+        .slide { min-height: 100vh; padding: 40px 60px; background: white; margin: 20px auto; max-width: 1400px; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); page-break-after: always; }
+        h1 { color: #0078d4; font-size: 2.4em; margin-bottom: 10px; border-bottom: 4px solid #0078d4; padding-bottom: 15px; }
+        h2 { color: #323130; font-size: 1.6em; margin: 25px 0 15px; }
+        h3 { color: #0078d4; font-size: 1.2em; margin: 20px 0 10px; }
+        h4 { color: #323130; font-size: 1.05em; margin-bottom: 8px; }
+        .subtitle { color: #605e5c; font-size: 1.1em; margin-bottom: 25px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin: 20px 0; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .card { background: #f3f2f1; border-radius: 8px; padding: 18px; border-left: 4px solid #0078d4; }
+        .card.green { border-left-color: #107c10; background: #f0fff0; }
+        .card.orange { border-left-color: #ff8c00; background: #fff8f0; }
+        .card.purple { border-left-color: #8764b8; background: #f8f0ff; }
+        .card.red { border-left-color: #d13438; background: #fff0f0; }
+        .card.blue { border-left-color: #0078d4; background: #f0f8ff; }
+        ul { margin-left: 20px; line-height: 1.7; }
+        li { margin: 4px 0; }
+        .highlight { background: #0078d4; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85em; }
+        .highlight.green { background: #107c10; }
+        .highlight.orange { background: #ff8c00; }
+        .highlight.red { background: #d13438; }
+        .highlight.purple { background: #8764b8; }
+        .time-badge { background: #107c10; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85em; display: inline-block; margin-bottom: 15px; }
+        .module-badge { background: #0078d4; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9em; display: inline-block; margin-bottom: 10px; }
+        .lab-badge { background: #ff8c00; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9em; display: inline-block; margin-bottom: 10px; }
+        .day-badge { background: #107c10; color: white; padding: 8px 20px; border-radius: 25px; font-size: 1.1em; display: inline-block; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.95em; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #edebe9; }
+        th { background: #0078d4; color: white; }
+        tr:hover { background: #f3f2f1; }
+        .code-block { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; font-family: 'Consolas', monospace; font-size: 0.85em; overflow-x: auto; margin: 10px 0; white-space: pre-wrap; }
+        .code-block .comment { color: #6a9955; }
+        .code-block .keyword { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+        .code-block .function { color: #dcdcaa; }
+        .tip-box { display: flex; align-items: flex-start; gap: 12px; padding: 15px; background: #e6f7ff; border-radius: 8px; margin: 10px 0; border-left: 4px solid #0078d4; }
+        .warning-box { display: flex; align-items: flex-start; gap: 12px; padding: 15px; background: #fff4ce; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ff8c00; }
+        .danger-box { display: flex; align-items: flex-start; gap: 12px; padding: 15px; background: #fde7e9; border-radius: 8px; margin: 10px 0; border-left: 4px solid #d13438; }
+        .success-box { display: flex; align-items: flex-start; gap: 12px; padding: 15px; background: #dff6dd; border-radius: 8px; margin: 10px 0; border-left: 4px solid #107c10; }
+        .icon { font-size: 1.5em; }
+        .notebook-header { background: linear-gradient(135deg, #F37626, #E8590C); color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 10px; }
+        .notebook-cell { background: #f8f9fa; border: 1px solid #e1e4e8; border-top: none; padding: 15px; }
+        .notebook-cell.code { background: #1e1e1e; color: #d4d4d4; font-family: 'Consolas', monospace; font-size: 0.85em; white-space: pre-wrap; }
+        .notebook-cell.output { background: #fff; border-left: 3px solid #107c10; }
+        .colab-badge { background: #F37626; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; }
+        .azure-badge { background: #0078d4; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; }
+        .tree-container { text-align: center; padding: 20px; background: #f8f9fa; border-radius: 12px; margin: 20px 0; }
+        .tree-node { display: inline-block; padding: 15px 25px; border-radius: 8px; margin: 5px; font-weight: 500; }
+        .tree-decision { background: #fff4ce; border: 2px solid #ff8c00; border-radius: 50px; }
+        .tree-connector { color: #666; font-size: 1.2em; margin: 5px 0; }
+        .tree-branch { display: inline-flex; gap: 40px; margin-top: 10px; }
+        .pipeline { display: flex; align-items: center; justify-content: center; gap: 0; margin: 30px 0; flex-wrap: wrap; }
+        .pipeline-step { position: relative; padding: 20px 25px; min-width: 130px; text-align: center; color: white; }
+        .pipeline-step::after { content: ''; position: absolute; right: -15px; top: 50%; transform: translateY(-50%); border: 15px solid transparent; border-left: 15px solid; z-index: 1; }
+        .pipeline-step.blue { background: #0078d4; }
+        .pipeline-step.blue::after { border-left-color: #0078d4; }
+        .pipeline-step.purple { background: #8764b8; }
+        .pipeline-step.purple::after { border-left-color: #8764b8; }
+        .pipeline-step.orange { background: #ff8c00; }
+        .pipeline-step.orange::after { border-left-color: #ff8c00; }
+        .pipeline-step.green { background: #107c10; }
+        .pipeline-step.green::after { border-left-color: #107c10; }
+        .pipeline-step.red { background: #d13438; }
+        .pipeline-step.red::after { border-left-color: #d13438; }
+        .pipeline-step:last-child::after { display: none; }
+        .pipeline-step small { display: block; opacity: 0.9; font-size: 0.8em; margin-top: 5px; }
+        .pipeline-label { font-size: 0.7em; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 2px 8px; border-radius: 10px; }
+        .vsteps { max-width: 700px; margin: 20px auto; }
+        .vstep { display: flex; gap: 20px; margin: 15px 0; }
+        .vstep-num { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; flex-shrink: 0; font-size: 1.1em; }
+        .vstep-content { flex: 1; padding: 15px 20px; border-radius: 8px; }
+        .vstep-connector { width: 50px; display: flex; justify-content: center; margin: -5px 0; }
+        .vstep-connector::before { content: ''; width: 3px; height: 25px; background: #ddd; }
+        .compare-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .compare-card { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .compare-header { padding: 20px; color: white; text-align: center; }
+        .compare-body { padding: 20px; background: white; }
+        .compare-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .compare-item:last-child { border-bottom: none; }
+        .compare-icon { font-size: 1.3em; }
+        @media print { .slide { box-shadow: none; margin: 0; page-break-after: always; } body { background: white; } }
+    </style>
+</head>
+<body>
+
+<!-- SLIDE 1: Day 3 Title -->
+<div class="slide">
+    <div style="display: flex; flex-direction: column; justify-content: center; height: 85vh; text-align: center;">
+        <span class="day-badge" style="margin-bottom: 30px;">DAY 3</span>
+        <p style="color: #0078d4; font-size: 1.2em; margin-bottom: 20px;">Azure AI Workshop Series</p>
+        <h1 style="font-size: 3em; border: none; text-align: center; color: #1a1a2e;">AI Agent Architectures</h1>
+        <p class="subtitle" style="font-size: 1.5em; margin: 20px 0; color: #107c10;">Design Patterns, Model Selection & Fine-Tuning</p>
+        <p style="color: #605e5c; font-size: 1.1em; margin-top: 30px;">From Raw Data to Production-Optimized Banking Agents</p>
+        <div style="margin-top: 40px;">
+            <span class="time-badge" style="font-size: 1em; padding: 12px 30px;">Half Day | Modules 13-17</span>
+        </div>
+        <div style="margin-top: 30px;">
+            <span class="highlight green">Design Patterns</span>
+            <span class="highlight">Data Processing</span>
+            <span class="highlight">Model Selection</span>
+            <span class="highlight purple">Fine-Tuning</span>
+            <span class="highlight orange">RAG vs Fine-Tuning</span>
+        </div>
+        <div style="margin-top: 30px;">
+            <span class="colab-badge">Google Colab</span>
+            <span class="azure-badge">Azure OpenAI</span>
+            <span class="azure-badge">Azure Functions</span>
+        </div>
+        <p style="margin-top: 40px; color: #8a8886;">Prerequisites: Day 1 & Day 2 Completed</p>
+    </div>
+</div>
+
+<!-- SLIDE 2: Day 3 Agenda -->
+<div class="slide">
+    <h1>📋 Day 3: Design Patterns & Fine-Tuning Agenda</h1>
+    <p class="subtitle">From Agent Design to Model Optimization</p>
+    
+    <table>
+        <tr><th>Module</th><th>Topic</th><th>Theory</th><th>Lab</th><th>Notebook</th></tr>
+        <tr><td><span class="highlight green">13</span></td><td>Single-Agent Design Patterns</td><td>30 min</td><td>30 min</td><td><code>10_agent_design_patterns.ipynb</code></td></tr>
+        <tr><td><span class="highlight">14</span></td><td>Processing Raw Data with LLMs</td><td>25 min</td><td>25 min</td><td><code>11_data_processing.ipynb</code></td></tr>
+        <tr><td><span class="highlight">15</span></td><td>Model Selection & Evaluation</td><td>25 min</td><td>20 min</td><td><code>12_model_selection.ipynb</code></td></tr>
+        <tr><td><span class="highlight purple">16</span></td><td>Fine-Tuning Models (LoRA, QLoRA)</td><td>30 min</td><td>30 min</td><td><code>13_fine_tuning.ipynb</code></td></tr>
+        <tr><td><span class="highlight orange">17</span></td><td>RAG vs Fine-Tuning Decision Framework</td><td>20 min</td><td>15 min</td><td><code>14_rag_vs_finetuning.ipynb</code></td></tr>
+    </table>
+    
+    <div class="tip-box" style="margin-top: 15px;">
+        <span class="icon">📓</span>
+        <div>
+            <strong>Setup Required:</strong> Ensure Azure OpenAI fine-tuning access is enabled. Run <code>00_setup.ipynb</code> if not already configured.
+        </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 20px;">
+        <div class="card green">
+            <h4>🎯 Day 3 Learning Objectives</h4>
+            <ul>
+                <li>Design robust single-agent architectures</li>
+                <li>Process and prepare data for LLMs</li>
+                <li>Select optimal models for banking use cases</li>
+                <li>Fine-tune models with LoRA/QLoRA</li>
+                <li>Choose between RAG and fine-tuning</li>
+            </ul>
+        </div>
+        <div class="card orange">
+            <h4>🏦 Banking Scenarios Today</h4>
+            <ul>
+                <li>Layered agent architecture design</li>
+                <li>Synthetic data generation for compliance</li>
+                <li>Fine-tuned loan document summarizer</li>
+                <li>JSON output fine-tuning for APIs</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="card blue" style="margin-top: 15px;">
+        <h4>🔗 Azure Documentation</h4>
+        <ul style="column-count: 2;">
+            <li><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/fine-tuning" target="_blank">Azure OpenAI Fine-Tuning</a></li>
+            <li><a href="https://learn.microsoft.com/azure/ai-services/openai/concepts/models" target="_blank">Model Capabilities</a></li>
+            <li><a href="https://learn.microsoft.com/azure/azure-functions/functions-bindings-openai" target="_blank">Azure Functions + OpenAI</a></li>
+            <li><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/batch" target="_blank">Batch API</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- SLIDE 3: Module 13 - Single-Agent Design Patterns -->
+<div class="slide">
+    <span class="module-badge">Module 13 - Theory</span>
+    <span class="time-badge">30 Minutes</span>
+    <h1>🏗️ Single-Agent Design Patterns</h1>
+    <p class="subtitle">Good Agent Design: Separation of Concerns</p>
+
+    <h3>Agent Architecture Layers</h3>
+    <div class="pipeline">
+        <div class="pipeline-step blue">
+            <span class="pipeline-label">LAYER 1</span>
+            🧠 Planning
+            <small>Goal decomposition</small>
+        </div>
+        <div class="pipeline-step purple">
+            <span class="pipeline-label">LAYER 2</span>
+            💭 Reasoning
+            <small>Decision making</small>
+        </div>
+        <div class="pipeline-step orange">
+            <span class="pipeline-label">LAYER 3</span>
+            🔧 Tools
+            <small>Action execution</small>
+        </div>
+        <div class="pipeline-step red">
+            <span class="pipeline-label">LAYER 4</span>
+            🛡️ Fallback
+            <small>Error recovery</small>
+        </div>
+        <div class="pipeline-step green">
+            <span class="pipeline-label">LAYER 5</span>
+            📊 Observability
+            <small>Logging & metrics</small>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card blue">
+            <h4>🧠 Planning Layer</h4>
+            <ul>
+                <li>Break complex tasks into subtasks</li>
+                <li>Determine execution order</li>
+                <li>Identify required tools</li>
+                <li>Set success criteria</li>
+            </ul>
+            <div class="code-block" style="font-size: 0.8em;"><span class="comment"># Planning prompt</span>
+<span class="string">"Break this task into steps:
+1. What information do I need?
+2. What tools should I use?
+3. What order makes sense?"</span></div>
+        </div>
+        <div class="card purple">
+            <h4>💭 Reasoning Layer</h4>
+            <ul>
+                <li>Evaluate tool outputs</li>
+                <li>Handle ambiguous situations</li>
+                <li>Make decisions under uncertainty</li>
+                <li>Synthesize information</li>
+            </ul>
+            <div class="code-block" style="font-size: 0.8em;"><span class="comment"># Reasoning prompt</span>
+<span class="string">"Given this data, what should I do?
+Consider: accuracy, risk, compliance"</span></div>
+        </div>
+    </div>
+
+    <div class="warning-box" style="margin-top: 15px;">
+        <span class="icon">⚠️</span>
+        <div>
+            <strong>Design Principle:</strong> Keep layers loosely coupled. Planning shouldn't know tool implementation details. Reasoning shouldn't handle error recovery.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: Tool-Using Agent with Failure Handling -->
+<div class="slide">
+    <span class="module-badge">Module 10</span>
+    <h1>🔧 Tool-Using Agent with Failure Handling</h1>
+    <p class="subtitle">Robust Tool Orchestration for Banking</p>
+
+    <h3>Failure Handling Decision Tree</h3>
+    <div class="tree-container">
+        <div class="tree-row">
+            <div class="tree-node tree-decision">🤔 Tool call failed?</div>
+        </div>
+        <div class="tree-connector">↙️ Transient Error &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Permanent Error ↘️</div>
+        <div class="tree-branch">
+            <div style="text-align: center;">
+                <div class="tree-node" style="background: #fff8f0; border: 2px solid #ff8c00;">🔄 <strong>Retry with Backoff</strong></div>
+                <div style="margin-top: 10px; font-size: 0.9em; background: #fff8f0; padding: 12px; border-radius: 8px;">
+                    • Rate limit (429)<br>
+                    • Timeout<br>
+                    • Network error<br>
+                    <strong>Max 3 retries</strong>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div class="tree-node tree-decision">🤔 Alternative tool available?</div>
+                <div class="tree-connector" style="font-size: 1em;">↙️ YES &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO ↘️</div>
+                <div class="tree-branch" style="gap: 20px;">
+                    <div>
+                        <div class="tree-node" style="background: #dff6dd; border: 2px solid #107c10;">🔀 <strong>Use Fallback Tool</strong></div>
+                    </div>
+                    <div>
+                        <div class="tree-node" style="background: #fde7e9; border: 2px solid #d13438;">👤 <strong>Escalate to Human</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>🏦 Banking Example: Account Lookup with Fallbacks</h3>
+    <div class="code-block"><span class="keyword">class</span> <span class="function">RobustAccountLookup</span>:
+    <span class="string">"""Tool with multiple fallback strategies"""</span>
+    
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.primary = CoreBankingAPI()
+        self.fallback = CachedDataStore()
+        self.last_resort = ManualLookupQueue()
+    
+    <span class="keyword">async def</span> <span class="function">get_account</span>(self, account_id: str) -> dict:
+        <span class="comment"># Try primary source</span>
+        <span class="keyword">try</span>:
+            <span class="keyword">return await</span> self._with_retry(self.primary.get, account_id)
+        <span class="keyword">except</span> TransientError:
+            logger.warning(<span class="string">"Primary failed, trying cache"</span>)
+        
+        <span class="comment"># Try cached data (may be stale)</span>
+        <span class="keyword">try</span>:
+            data = self.fallback.get(account_id)
+            data[<span class="string">"_stale"</span>] = True  <span class="comment"># Mark as potentially stale</span>
+            <span class="keyword">return</span> data
+        <span class="keyword">except</span> CacheMiss:
+            logger.warning(<span class="string">"Cache miss, escalating"</span>)
+        
+        <span class="comment"># Last resort: queue for human</span>
+        <span class="keyword">return</span> self.last_resort.queue(account_id)</div>
+</div>
+
+<!-- SLIDE 5: Azure Functions for Agent Tools -->
+<div class="slide">
+    <span class="module-badge">Module 10</span>
+    <h1>⚡ Azure Functions for Agent Tools</h1>
+    <p class="subtitle">Serverless Tool Execution for Banking Agents</p>
+
+    <div class="grid-2">
+        <div class="card green">
+            <h4>✅ Why Azure Functions for Tools?</h4>
+            <ul>
+                <li>Automatic scaling for variable load</li>
+                <li>Pay-per-execution cost model</li>
+                <li>Built-in retry policies</li>
+                <li>Managed Identity for secure access</li>
+                <li>Easy integration with Azure services</li>
+            </ul>
+        </div>
+        <div class="card orange">
+            <h4>⚠️ Considerations</h4>
+            <ul>
+                <li>Cold start latency (use Premium for agents)</li>
+                <li>10-minute timeout on Consumption plan</li>
+                <li>Stateless by default (use Durable Functions)</li>
+                <li>Connection limits to databases</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>🏦 Banking Tool: Transaction Validator Function</h3>
+    <div class="code-block"><span class="keyword">import</span> azure.functions <span class="keyword">as</span> func
+<span class="keyword">import</span> json
+
+app = func.FunctionApp()
+
+@app.function_name(<span class="string">"ValidateTransaction"</span>)
+@app.route(route=<span class="string">"validate"</span>, methods=[<span class="string">"POST"</span>])
+<span class="keyword">async def</span> <span class="function">validate_transaction</span>(req: func.HttpRequest) -> func.HttpResponse:
+    <span class="string">"""Agent tool: Validate banking transaction"""</span>
+    
+    <span class="keyword">try</span>:
+        data = req.get_json()
+        amount = data[<span class="string">"amount"</span>]
+        account_id = data[<span class="string">"account_id"</span>]
+        
+        <span class="comment"># Validation logic</span>
+        result = {
+            <span class="string">"valid"</span>: amount <= 50000,  <span class="comment"># Daily limit</span>
+            <span class="string">"requires_approval"</span>: amount > 10000,
+            <span class="string">"risk_score"</span>: calculate_risk(data)
+        }
+        
+        <span class="keyword">return</span> func.HttpResponse(
+            json.dumps(result),
+            mimetype=<span class="string">"application/json"</span>
+        )
+    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+        <span class="comment"># Structured error for agent to handle</span>
+        <span class="keyword">return</span> func.HttpResponse(
+            json.dumps({<span class="string">"error"</span>: str(e), <span class="string">"retryable"</span>: False}),
+            status_code=400
+        )</div>
+
+    <div class="tip-box">
+        <span class="icon">💡</span>
+        <div>
+            <strong>Best Practice:</strong> Return structured errors with <code>retryable</code> flag so agents know whether to retry or escalate.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 6: Module 10 Lab -->
+<div class="slide">
+    <span class="lab-badge">Module 10 - Lab</span>
+    <span class="time-badge">30 Minutes</span>
+    <h1>🔬 Lab: Build a Robust Tool-Using Agent</h1>
+    <p class="subtitle">Hands-On: Agent with Failure Handling</p>
+
+    <div class="notebook-header">
+        <span>📓</span> <strong>10_agent_design_patterns.ipynb</strong> <span class="colab-badge" style="margin-left: auto;">Open in Colab</span>
+    </div>
+    <div class="notebook-cell code"><span class="comment"># Robust Agent with Layered Architecture</span>
+<span class="keyword">class</span> <span class="function">BankingAgent</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, client):
+        self.client = client
+        self.planner = PlanningLayer()
+        self.reasoner = ReasoningLayer()
+        self.tools = ToolLayer(fallback_enabled=True)
+        self.fallback = FallbackLayer()
+    
+    <span class="keyword">async def</span> <span class="function">execute</span>(self, task: str) -> dict:
+        <span class="comment"># Layer 1: Planning</span>
+        plan = <span class="keyword">await</span> self.planner.create_plan(task)
+        
+        <span class="keyword">for</span> step <span class="keyword">in</span> plan.steps:
+            <span class="keyword">try</span>:
+                <span class="comment"># Layer 2: Reasoning - decide how to execute</span>
+                action = <span class="keyword">await</span> self.reasoner.decide(step)
+                
+                <span class="comment"># Layer 3: Tool execution with retry</span>
+                result = <span class="keyword">await</span> self.tools.execute(action)
+                
+            <span class="keyword">except</span> ToolError <span class="keyword">as</span> e:
+                <span class="comment"># Layer 4: Fallback handling</span>
+                result = <span class="keyword">await</span> self.fallback.handle(e, step)
+        
+        <span class="keyword">return</span> self.reasoner.synthesize(results)</div>
+    <div class="notebook-cell output">✅ Agent executed 5-step plan
+   Step 1: get_account_balance → Success
+   Step 2: get_transaction_history → Success  
+   Step 3: check_fraud_indicators → Retry (1/3) → Success
+   Step 4: calculate_risk_score → Success
+   Step 5: generate_report → Success
+   
+Final Result: Risk assessment complete, score: 0.23 (LOW)</div>
+
+    <div class="tip-box">
+        <span class="icon">🎯</span>
+        <div>
+            <strong>Exercise:</strong> Add a circuit breaker that stops calling a tool after 5 consecutive failures.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: Module 11 - Processing Raw Data -->
+<div class="slide">
+    <span class="module-badge">Module 11 - Theory</span>
+    <span class="time-badge">25 Minutes</span>
+    <h1>📊 Processing Raw Data with LLMs</h1>
+    <p class="subtitle">Preparing Data for Models: Cleaning, Preprocessing, Synthetic Generation</p>
+
+    <h3>Data Processing Pipeline</h3>
+    <div class="pipeline">
+        <div class="pipeline-step blue">
+            <span class="pipeline-label">STEP 1</span>
+            📥 Raw Data
+            <small>PDFs, emails, logs</small>
+        </div>
+        <div class="pipeline-step purple">
+            <span class="pipeline-label">STEP 2</span>
+            🧹 Cleaning
+            <small>Remove noise, PII</small>
+        </div>
+        <div class="pipeline-step orange">
+            <span class="pipeline-label">STEP 3</span>
+            🔄 Preprocessing
+            <small>Normalize, chunk</small>
+        </div>
+        <div class="pipeline-step green">
+            <span class="pipeline-label">STEP 4</span>
+            ✨ Enrichment
+            <small>Labels, metadata</small>
+        </div>
+        <div class="pipeline-step red">
+            <span class="pipeline-label">STEP 5</span>
+            📤 Output
+            <small>JSONL for training</small>
+        </div>
+    </div>
+
+    <div class="grid-3">
+        <div class="card blue">
+            <h4>🧹 Data Cleaning</h4>
+            <ul>
+                <li>Remove duplicates</li>
+                <li>Fix encoding issues</li>
+                <li>Mask PII (names, SSN, accounts)</li>
+                <li>Standardize formats</li>
+            </ul>
+        </div>
+        <div class="card purple">
+            <h4>🔄 Preprocessing</h4>
+            <ul>
+                <li>Chunk long documents</li>
+                <li>Extract structured data</li>
+                <li>Normalize terminology</li>
+                <li>Handle multiple languages</li>
+            </ul>
+        </div>
+        <div class="card green">
+            <h4>✨ Synthetic Generation</h4>
+            <ul>
+                <li>Augment small datasets</li>
+                <li>Generate edge cases</li>
+                <li>Create balanced classes</li>
+                <li>Privacy-safe alternatives</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="warning-box" style="margin-top: 15px;">
+        <span class="icon">⚠️</span>
+        <div>
+            <strong>Banking Compliance:</strong> Always mask PII before using data for training. Use synthetic data for sensitive scenarios. Maintain audit trails of data transformations.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 8: Synthetic Data Generation -->
+<div class="slide">
+    <span class="module-badge">Module 11</span>
+    <h1>✨ Synthetic Data Generation for Banking</h1>
+    <p class="subtitle">Creating Training Data When Real Data is Limited or Sensitive</p>
+
+    <div class="grid-2">
+        <div class="card green">
+            <h4>✅ When to Use Synthetic Data</h4>
+            <ul>
+                <li>Insufficient real examples</li>
+                <li>PII/compliance restrictions</li>
+                <li>Need rare edge cases</li>
+                <li>Class imbalance (fraud is rare)</li>
+                <li>New product/feature launch</li>
+            </ul>
+        </div>
+        <div class="card red">
+            <h4>❌ Risks of Synthetic Data</h4>
+            <ul>
+                <li>May not reflect real distribution</li>
+                <li>Can amplify biases</li>
+                <li>Missing real-world edge cases</li>
+                <li>Overconfident models</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>🏦 Example: Generate Loan Application Variations</h3>
+    <div class="code-block"><span class="keyword">def</span> <span class="function">generate_synthetic_loan_data</span>(base_example: dict, variations: int = 10) -> list:
+    <span class="string">"""Use LLM to generate realistic variations of loan applications"""</span>
+    
+    prompt = <span class="string">f"""Generate {variations} realistic variations of this loan application.
+    
+Base example:
+{json.dumps(base_example, indent=2)}
+
+Requirements:
+- Vary income levels ($30K - $500K)
+- Include different employment types (W2, self-employed, retired)
+- Mix credit scores (580-850)
+- Include edge cases (recent job change, high DTI)
+- Keep realistic correlations (high income → higher loan amounts)
+
+Output as JSON array."""</span>
+
+    response = client.chat.completions.create(
+        model=<span class="string">"gpt-4o"</span>,
+        messages=[{<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: prompt}],
+        response_format={<span class="string">"type"</span>: <span class="string">"json_object"</span>}
+    )
+    
+    <span class="keyword">return</span> json.loads(response.choices[0].message.content)</div>
+
+    <div class="tip-box">
+        <span class="icon">💡</span>
+        <div>
+            <strong>Best Practice:</strong> Always validate synthetic data against real data distributions. Use human review for a sample before training.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 9: Module 12 - Model Selection -->
+<div class="slide">
+    <span class="module-badge">Module 12 - Theory</span>
+    <span class="time-badge">25 Minutes</span>
+    <h1>🎯 Model Selection & Evaluation</h1>
+    <p class="subtitle">Trade-offs: Latency, Cost, Accuracy, Domain Specificity</p>
+
+    <h3>Azure OpenAI Model Comparison</h3>
+    <table>
+        <tr>
+            <th>Model</th>
+            <th>Latency</th>
+            <th>Cost (1M tokens)</th>
+            <th>Accuracy</th>
+            <th>Best For</th>
+        </tr>
+        <tr>
+            <td><strong>GPT-4o</strong></td>
+            <td>~2-5s</td>
+            <td>$5 / $15</td>
+            <td><span class="highlight green">Highest</span></td>
+            <td>Complex reasoning, analysis</td>
+        </tr>
+        <tr>
+            <td><strong>GPT-4o-mini</strong></td>
+            <td>~0.5-2s</td>
+            <td>$0.15 / $0.60</td>
+            <td><span class="highlight">High</span></td>
+            <td>Most tasks, cost-sensitive</td>
+        </tr>
+        <tr>
+            <td><strong>o1-preview</strong></td>
+            <td>~10-30s</td>
+            <td>$15 / $60</td>
+            <td><span class="highlight green">Highest</span></td>
+            <td>Math, code, deep reasoning</td>
+        </tr>
+        <tr>
+            <td><strong>Fine-tuned GPT-4o-mini</strong></td>
+            <td>~0.5-2s</td>
+            <td>$0.30 / $1.20</td>
+            <td><span class="highlight green">Domain-specific</span></td>
+            <td>Specialized tasks</td>
+        </tr>
+    </table>
+
+    <h3>Model Selection Decision Tree</h3>
+    <div class="tree-container">
+        <div class="tree-row">
+            <div class="tree-node tree-decision">🤔 Task complexity?</div>
+        </div>
+        <div class="tree-connector">↙️ Simple/Routine &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Complex/Reasoning ↘️</div>
+        <div class="tree-branch">
+            <div style="text-align: center;">
+                <div class="tree-node" style="background: #dff6dd; border: 2px solid #107c10;">💚 <strong>GPT-4o-mini</strong></div>
+                <div style="margin-top: 10px; font-size: 0.9em; background: #f0fff0; padding: 10px; border-radius: 8px;">
+                    FAQ, classification, extraction<br>
+                    <strong>97% cost savings</strong>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div class="tree-node tree-decision">🤔 Domain-specific?</div>
+                <div class="tree-connector" style="font-size: 1em;">↙️ YES &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO ↘️</div>
+                <div class="tree-branch" style="gap: 20px;">
+                    <div>
+                        <div class="tree-node" style="background: #f8f0ff; border: 2px solid #8764b8;">💜 <strong>Fine-tuned</strong></div>
+                    </div>
+                    <div>
+                        <div class="tree-node" style="background: #e6f7ff; border: 2px solid #0078d4;">💙 <strong>GPT-4o</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 10: Knowledge Distillation & Optimization -->
+<div class="slide">
+    <span class="module-badge">Module 12</span>
+    <h1>🔬 Knowledge Distillation & Model Optimization</h1>
+    <p class="subtitle">Lighter Models for Performance-Sensitive Environments</p>
+
+    <div class="grid-2">
+        <div class="card purple">
+            <h4>📚 Knowledge Distillation</h4>
+            <p>Train a smaller "student" model to mimic a larger "teacher" model.</p>
+            <div class="pipeline" style="margin: 15px 0; transform: scale(0.85);">
+                <div class="pipeline-step blue">
+                    GPT-4o
+                    <small>Teacher</small>
+                </div>
+                <div class="pipeline-step purple">
+                    Generate
+                    <small>Outputs</small>
+                </div>
+                <div class="pipeline-step green">
+                    GPT-4o-mini
+                    <small>Student</small>
+                </div>
+            </div>
+            <ul>
+                <li>Use GPT-4o to label training data</li>
+                <li>Fine-tune GPT-4o-mini on those labels</li>
+                <li>Get 90% quality at 3% cost</li>
+            </ul>
+        </div>
+        <div class="card orange">
+            <h4>⚡ Quantization & Pruning</h4>
+            <p>Reduce model size for faster inference.</p>
+            <table style="font-size: 0.85em; margin-top: 10px;">
+                <tr><th>Technique</th><th>Size Reduction</th><th>Speed Gain</th></tr>
+                <tr><td>INT8 Quantization</td><td>4x smaller</td><td>2-3x faster</td></tr>
+                <tr><td>INT4 Quantization</td><td>8x smaller</td><td>3-4x faster</td></tr>
+                <tr><td>Pruning (50%)</td><td>2x smaller</td><td>1.5x faster</td></tr>
+            </table>
+            <p style="margin-top: 10px; font-size: 0.9em;"><em>Note: Azure OpenAI handles this automatically. Relevant for self-hosted models.</em></p>
+        </div>
+    </div>
+
+    <h3>🏦 Banking Use Case: Distilled Document Classifier</h3>
+    <div class="code-block"><span class="comment"># Step 1: Generate labels with GPT-4o (teacher)</span>
+teacher_labels = []
+<span class="keyword">for</span> doc <span class="keyword">in</span> unlabeled_documents:
+    label = gpt4o.classify(doc)  <span class="comment"># High accuracy, high cost</span>
+    teacher_labels.append({<span class="string">"text"</span>: doc, <span class="string">"label"</span>: label})
+
+<span class="comment"># Step 2: Fine-tune GPT-4o-mini (student) on teacher labels</span>
+fine_tuned_model = azure_openai.fine_tune(
+    model=<span class="string">"gpt-4o-mini"</span>,
+    training_data=teacher_labels
+)
+
+<span class="comment"># Result: 95% of GPT-4o accuracy at 3% of the cost</span></div>
+</div>
+
+<!-- SLIDE 11: Model Evaluation Metrics -->
+<div class="slide">
+    <span class="module-badge">Module 12</span>
+    <h1>📊 Model Evaluation Metrics</h1>
+    <p class="subtitle">Accuracy, F1-Score, BLEU, and Banking-Specific Metrics</p>
+
+    <div class="grid-2">
+        <div class="card blue">
+            <h4>📈 Classification Metrics</h4>
+            <table style="font-size: 0.9em;">
+                <tr><th>Metric</th><th>Use Case</th></tr>
+                <tr><td><strong>Accuracy</strong></td><td>Balanced classes</td></tr>
+                <tr><td><strong>Precision</strong></td><td>Minimize false positives (fraud alerts)</td></tr>
+                <tr><td><strong>Recall</strong></td><td>Minimize false negatives (fraud detection)</td></tr>
+                <tr><td><strong>F1-Score</strong></td><td>Balance precision/recall</td></tr>
+            </table>
+        </div>
+        <div class="card green">
+            <h4>📝 Generation Metrics</h4>
+            <table style="font-size: 0.9em;">
+                <tr><th>Metric</th><th>Use Case</th></tr>
+                <tr><td><strong>BLEU</strong></td><td>Translation, summarization</td></tr>
+                <tr><td><strong>ROUGE</strong></td><td>Summarization quality</td></tr>
+                <tr><td><strong>Perplexity</strong></td><td>Language model quality</td></tr>
+                <tr><td><strong>Human Eval</strong></td><td>Subjective quality</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <h3>🏦 Banking-Specific Evaluation</h3>
+    <div class="grid-3">
+        <div class="card orange">
+            <h4>🎯 Compliance Score</h4>
+            <p>Does output follow regulatory requirements?</p>
+            <ul>
+                <li>Required disclosures present</li>
+                <li>No prohibited claims</li>
+                <li>Proper disclaimers</li>
+            </ul>
+        </div>
+        <div class="card purple">
+            <h4>🔒 Safety Score</h4>
+            <p>Does output avoid harmful content?</p>
+            <ul>
+                <li>No PII leakage</li>
+                <li>No financial advice</li>
+                <li>Appropriate escalation</li>
+            </ul>
+        </div>
+        <div class="card red">
+            <h4>💰 Business Impact</h4>
+            <p>Does it improve business metrics?</p>
+            <ul>
+                <li>Customer satisfaction</li>
+                <li>Resolution time</li>
+                <li>Escalation rate</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="code-block"><span class="comment"># Evaluate fine-tuned model</span>
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> classification_report, f1_score
+
+predictions = [model.predict(x) <span class="keyword">for</span> x <span class="keyword">in</span> test_data]
+labels = [x[<span class="string">"label"</span>] <span class="keyword">for</span> x <span class="keyword">in</span> test_data]
+
+print(classification_report(labels, predictions))
+<span class="comment"># Output: precision, recall, f1-score for each class</span></div>
+</div>
+
+<!-- SLIDE 12: Module 13 - Fine-Tuning -->
+<div class="slide">
+    <span class="module-badge">Module 13 - Theory</span>
+    <span class="time-badge">30 Minutes</span>
+    <h1>🎓 Fine-Tuning Models</h1>
+    <p class="subtitle">LoRA, QLoRA, and Azure OpenAI Fine-Tuning</p>
+
+    <h3>Why Fine-Tune?</h3>
+    <div class="grid-3">
+        <div class="card green">
+            <h4>✅ Fine-Tune When</h4>
+            <ul>
+                <li>Consistent output format needed</li>
+                <li>Domain-specific terminology</li>
+                <li>Reduce prompt length</li>
+                <li>Improve latency</li>
+                <li>Lower per-request cost</li>
+            </ul>
+        </div>
+        <div class="card red">
+            <h4>❌ Don't Fine-Tune When</h4>
+            <ul>
+                <li>Knowledge changes frequently</li>
+                <li>Need real-time data</li>
+                <li>Small dataset (&lt;100 examples)</li>
+                <li>Prompt engineering works</li>
+            </ul>
+        </div>
+        <div class="card blue">
+            <h4>📊 Fine-Tuning Cost</h4>
+            <ul>
+                <li>Training: ~$25/1M tokens</li>
+                <li>Hosting: ~$3/hour</li>
+                <li>Inference: 2x base model</li>
+                <li>Break-even: ~10K requests</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>Parameter-Efficient Fine-Tuning (PEFT)</h3>
+    <div class="compare-container">
+        <div class="compare-card">
+            <div class="compare-header" style="background: linear-gradient(135deg, #8764b8, #6b4f91);">
+                <h3 style="margin: 0; color: white;">🔧 LoRA (Low-Rank Adaptation)</h3>
+            </div>
+            <div class="compare-body">
+                <div class="compare-item"><span class="compare-icon">📉</span> Trains only 0.1% of parameters</div>
+                <div class="compare-item"><span class="compare-icon">⚡</span> 10x faster than full fine-tuning</div>
+                <div class="compare-item"><span class="compare-icon">💾</span> Small adapter files (~10MB)</div>
+                <div class="compare-item"><span class="compare-icon">🔄</span> Easy to swap adapters</div>
+            </div>
+        </div>
+        <div class="compare-card">
+            <div class="compare-header" style="background: linear-gradient(135deg, #107c10, #0d5c0d);">
+                <h3 style="margin: 0; color: white;">⚡ QLoRA (Quantized LoRA)</h3>
+            </div>
+            <div class="compare-body">
+                <div class="compare-item"><span class="compare-icon">📉</span> 4-bit quantized base model</div>
+                <div class="compare-item"><span class="compare-icon">💾</span> 4x less memory than LoRA</div>
+                <div class="compare-item"><span class="compare-icon">🖥️</span> Fine-tune on consumer GPUs</div>
+                <div class="compare-item"><span class="compare-icon">📊</span> Minimal quality loss</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 13: Azure OpenAI Fine-Tuning -->
+<div class="slide">
+    <span class="module-badge">Module 13</span>
+    <h1>☁️ Azure OpenAI Fine-Tuning</h1>
+    <p class="subtitle">Hands-On with CLI and SDK</p>
+
+    <h3>Fine-Tuning Pipeline</h3>
+    <div class="pipeline">
+        <div class="pipeline-step blue">
+            <span class="pipeline-label">STEP 1</span>
+            📝 Prepare Data
+            <small>JSONL format</small>
+        </div>
+        <div class="pipeline-step purple">
+            <span class="pipeline-label">STEP 2</span>
+            📤 Upload
+            <small>Azure Storage</small>
+        </div>
+        <div class="pipeline-step orange">
+            <span class="pipeline-label">STEP 3</span>
+            🎓 Train
+            <small>Fine-tune job</small>
+        </div>
+        <div class="pipeline-step green">
+            <span class="pipeline-label">STEP 4</span>
+            🚀 Deploy
+            <small>Create endpoint</small>
+        </div>
+        <div class="pipeline-step red">
+            <span class="pipeline-label">STEP 5</span>
+            📊 Evaluate
+            <small>Test & iterate</small>
+        </div>
+    </div>
+
+    <h3>📝 Training Data Format (JSONL)</h3>
+    <div class="code-block"><span class="comment"># Each line is a complete conversation</span>
+{<span class="string">"messages"</span>: [
+    {<span class="string">"role"</span>: <span class="string">"system"</span>, <span class="string">"content"</span>: <span class="string">"You are a loan document summarizer."</span>},
+    {<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: <span class="string">"Summarize: [loan document text...]"</span>},
+    {<span class="string">"role"</span>: <span class="string">"assistant"</span>, <span class="string">"content"</span>: <span class="string">"**Loan Amount:** $250,000\n**Term:** 30 years\n**Rate:** 6.5% fixed\n**Monthly Payment:** $1,580"</span>}
+]}
+{<span class="string">"messages"</span>: [
+    {<span class="string">"role"</span>: <span class="string">"system"</span>, <span class="string">"content"</span>: <span class="string">"You are a loan document summarizer."</span>},
+    {<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: <span class="string">"Summarize: [another loan document...]"</span>},
+    {<span class="string">"role"</span>: <span class="string">"assistant"</span>, <span class="string">"content"</span>: <span class="string">"**Loan Amount:** $150,000\n**Term:** 15 years\n**Rate:** 5.9% fixed\n**Monthly Payment:** $1,260"</span>}
+]}</div>
+
+    <h3>🔧 Azure CLI Fine-Tuning</h3>
+    <div class="code-block"><span class="comment"># Upload training file</span>
+az openai file upload \
+    --resource-group rg-banking-ai \
+    --resource-name my-openai \
+    --file training_data.jsonl \
+    --purpose fine-tune
+
+<span class="comment"># Create fine-tuning job</span>
+az openai fine-tuning job create \
+    --resource-group rg-banking-ai \
+    --resource-name my-openai \
+    --model gpt-4o-mini-2024-07-18 \
+    --training-file file-abc123 \
+    --hyperparameters n_epochs=3
+
+<span class="comment"># Check status</span>
+az openai fine-tuning job show --job-id ftjob-xyz789</div>
+</div>
+
+<!-- SLIDE 14: Module 13 Lab -->
+<div class="slide">
+    <span class="lab-badge">Module 13 - Lab</span>
+    <span class="time-badge">30 Minutes</span>
+    <h1>🔬 Lab: Fine-Tune a Loan Summarizer</h1>
+    <p class="subtitle">Hands-On: JSON Output Fine-Tuning</p>
+
+    <div class="notebook-header">
+        <span>📓</span> <strong>13_fine_tuning.ipynb</strong> <span class="azure-badge" style="margin-left: auto;">Azure OpenAI</span>
+    </div>
+    <div class="notebook-cell code"><span class="comment"># Prepare training data for JSON output</span>
+training_examples = [
+    {
+        <span class="string">"messages"</span>: [
+            {<span class="string">"role"</span>: <span class="string">"system"</span>, <span class="string">"content"</span>: <span class="string">"Extract loan details as JSON."</span>},
+            {<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: <span class="string">"Document: Mortgage for $350,000 at 6.25% for 30 years..."</span>},
+            {<span class="string">"role"</span>: <span class="string">"assistant"</span>, <span class="string">"content"</span>: <span class="string">'{"loan_type": "mortgage", "amount": 350000, "rate": 6.25, "term_years": 30}'</span>}
+        ]
+    }
+    <span class="comment"># ... 100+ examples</span>
+]
+
+<span class="comment"># Save as JSONL</span>
+<span class="keyword">with</span> open(<span class="string">"training.jsonl"</span>, <span class="string">"w"</span>) <span class="keyword">as</span> f:
+    <span class="keyword">for</span> ex <span class="keyword">in</span> training_examples:
+        f.write(json.dumps(ex) + <span class="string">"\n"</span>)</div>
+
+    <div class="notebook-cell code"><span class="comment"># Upload and fine-tune with SDK</span>
+<span class="keyword">from</span> openai <span class="keyword">import</span> AzureOpenAI
+
+client = AzureOpenAI(...)
+
+<span class="comment"># Upload training file</span>
+file = client.files.create(
+    file=open(<span class="string">"training.jsonl"</span>, <span class="string">"rb"</span>),
+    purpose=<span class="string">"fine-tune"</span>
+)
+
+<span class="comment"># Create fine-tuning job</span>
+job = client.fine_tuning.jobs.create(
+    training_file=file.id,
+    model=<span class="string">"gpt-4o-mini-2024-07-18"</span>,
+    hyperparameters={<span class="string">"n_epochs"</span>: 3}
+)
+
+print(f<span class="string">"Job ID: {job.id}"</span>)</div>
+    <div class="notebook-cell output">Job ID: ftjob-abc123
+Status: running
+Trained tokens: 125,000
+Estimated completion: 15 minutes</div>
+
+    <div class="tip-box">
+        <span class="icon">🎯</span>
+        <div>
+            <strong>Exercise:</strong> Fine-tune a model to classify customer complaints into categories (billing, fraud, service, other).
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 15: Module 14 - RAG vs Fine-Tuning -->
+<div class="slide">
+    <span class="module-badge">Module 14 - Theory</span>
+    <span class="time-badge">20 Minutes</span>
+    <h1>⚖️ RAG vs Fine-Tuning</h1>
+    <p class="subtitle">Decision Framework for Banking Use Cases</p>
+
+    <div class="compare-container">
+        <div class="compare-card">
+            <div class="compare-header" style="background: linear-gradient(135deg, #0078d4, #106ebe);">
+                <h3 style="margin: 0; color: white;">🔍 RAG (Retrieval-Augmented Generation)</h3>
+            </div>
+            <div class="compare-body">
+                <div class="compare-item"><span class="compare-icon">✅</span> Real-time knowledge updates</div>
+                <div class="compare-item"><span class="compare-icon">✅</span> No training required</div>
+                <div class="compare-item"><span class="compare-icon">✅</span> Traceable sources</div>
+                <div class="compare-item"><span class="compare-icon">✅</span> Works with any base model</div>
+                <div class="compare-item"><span class="compare-icon">⚠️</span> Higher latency (retrieval step)</div>
+                <div class="compare-item"><span class="compare-icon">⚠️</span> Retrieval quality matters</div>
+            </div>
+        </div>
+        <div class="compare-card">
+            <div class="compare-header" style="background: linear-gradient(135deg, #8764b8, #6b4f91);">
+                <h3 style="margin: 0; color: white;">🎓 Fine-Tuning</h3>
+            </div>
+            <div class="compare-body">
+                <div class="compare-item"><span class="compare-icon">✅</span> Consistent output format</div>
+                <div class="compare-item"><span class="compare-icon">✅</span> Lower inference latency</div>
+                <div class="compare-item"><span class="compare-icon">✅</span> Shorter prompts needed</div>
+                <div class="compare-item"><span class="compare-icon">✅</span> Domain-specific behavior</div>
+                <div class="compare-item"><span class="compare-icon">⚠️</span> Training cost & time</div>
+                <div class="compare-item"><span class="compare-icon">⚠️</span> Knowledge frozen at training</div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Decision Tree: RAG vs Fine-Tuning</h3>
+    <div class="tree-container">
+        <div class="tree-row">
+            <div class="tree-node tree-decision">🤔 Does knowledge change frequently?</div>
+        </div>
+        <div class="tree-connector">↙️ YES &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO ↘️</div>
+        <div class="tree-branch">
+            <div style="text-align: center;">
+                <div class="tree-node" style="background: #e6f7ff; border: 2px solid #0078d4;">🔍 <strong>Use RAG</strong></div>
+                <div style="margin-top: 10px; font-size: 0.9em; background: #f0f8ff; padding: 10px; border-radius: 8px;">
+                    Policy docs, rates, products
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div class="tree-node tree-decision">🤔 Need specific output format?</div>
+                <div class="tree-connector" style="font-size: 1em;">↙️ YES &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NO ↘️</div>
+                <div class="tree-branch" style="gap: 20px;">
+                    <div>
+                        <div class="tree-node" style="background: #f8f0ff; border: 2px solid #8764b8;">🎓 <strong>Fine-Tune</strong></div>
+                    </div>
+                    <div>
+                        <div class="tree-node" style="background: #dff6dd; border: 2px solid #107c10;">💡 <strong>Prompt Engineering</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 16: Use Case Decision Matrix -->
+<div class="slide">
+    <span class="module-badge">Module 14</span>
+    <h1>🏦 Banking Use Case Decision Matrix</h1>
+    <p class="subtitle">RAG, Fine-Tuning, or Both?</p>
+
+    <table>
+        <tr>
+            <th>Use Case</th>
+            <th>Approach</th>
+            <th>Reasoning</th>
+        </tr>
+        <tr>
+            <td><strong>Internal Chatbot</strong> (HR policies, IT help)</td>
+            <td><span class="highlight">RAG</span></td>
+            <td>Policies change frequently, need source citations</td>
+        </tr>
+        <tr>
+            <td><strong>Document Agent</strong> (loan processing)</td>
+            <td><span class="highlight">RAG</span> + <span class="highlight purple">Fine-Tune</span></td>
+            <td>RAG for docs, fine-tune for consistent extraction</td>
+        </tr>
+        <tr>
+            <td><strong>Customer FAQ Bot</strong></td>
+            <td><span class="highlight">RAG</span></td>
+            <td>Product info changes, need accurate answers</td>
+        </tr>
+        <tr>
+            <td><strong>Compliance Classifier</strong></td>
+            <td><span class="highlight purple">Fine-Tune</span></td>
+            <td>Fixed categories, consistent format needed</td>
+        </tr>
+        <tr>
+            <td><strong>Fraud Narrative Generator</strong></td>
+            <td><span class="highlight purple">Fine-Tune</span></td>
+            <td>Specific style/format, regulatory requirements</td>
+        </tr>
+        <tr>
+            <td><strong>Investment Advisor</strong></td>
+            <td><span class="highlight">RAG</span></td>
+            <td>Market data changes daily, need disclaimers</td>
+        </tr>
+    </table>
+
+    <div class="grid-2" style="margin-top: 20px;">
+        <div class="card green">
+            <h4>✅ Hybrid Approach (Best of Both)</h4>
+            <ul>
+                <li>Fine-tune for output format & style</li>
+                <li>RAG for current knowledge</li>
+                <li>Example: Fine-tuned summarizer + RAG for policy lookup</li>
+            </ul>
+        </div>
+        <div class="card orange">
+            <h4>⚠️ Common Mistakes</h4>
+            <ul>
+                <li>Fine-tuning when RAG would work</li>
+                <li>RAG with poor retrieval quality</li>
+                <li>Not evaluating before deploying</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 17: Module 14 Lab -->
+<div class="slide">
+    <span class="lab-badge">Module 14 - Lab</span>
+    <span class="time-badge">15 Minutes</span>
+    <h1>🔬 Lab: RAG vs Fine-Tuning Comparison</h1>
+    <p class="subtitle">Hands-On: Compare Approaches for Document Summarization</p>
+
+    <div class="notebook-header">
+        <span>📓</span> <strong>14_rag_vs_finetuning.ipynb</strong> <span class="colab-badge" style="margin-left: auto;">Open in Colab</span>
+    </div>
+    <div class="notebook-cell code"><span class="comment"># Compare RAG vs Fine-Tuned for loan summarization</span>
+
+<span class="comment"># Approach 1: RAG with base model</span>
+<span class="keyword">def</span> <span class="function">rag_summarize</span>(document: str) -> str:
+    <span class="comment"># Retrieve similar examples</span>
+    examples = vector_store.search(document, k=3)
+    
+    prompt = <span class="string">f"""Based on these example summaries:
+{examples}
+
+Summarize this loan document:
+{document}"""</span>
+    
+    <span class="keyword">return</span> client.chat.completions.create(
+        model=<span class="string">"gpt-4o-mini"</span>,
+        messages=[{<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: prompt}]
+    ).choices[0].message.content
+
+<span class="comment"># Approach 2: Fine-tuned model</span>
+<span class="keyword">def</span> <span class="function">finetuned_summarize</span>(document: str) -> str:
+    <span class="keyword">return</span> client.chat.completions.create(
+        model=<span class="string">"ft:gpt-4o-mini:banking:loan-summarizer"</span>,
+        messages=[
+            {<span class="string">"role"</span>: <span class="string">"system"</span>, <span class="string">"content"</span>: <span class="string">"Summarize the loan document."</span>},
+            {<span class="string">"role"</span>: <span class="string">"user"</span>, <span class="string">"content"</span>: document}
+        ]
+    ).choices[0].message.content</div>
+
+    <div class="notebook-cell code"><span class="comment"># Evaluate both approaches</span>
+test_docs = load_test_documents()
+results = []
+
+<span class="keyword">for</span> doc <span class="keyword">in</span> test_docs:
+    rag_result = rag_summarize(doc[<span class="string">"text"</span>])
+    ft_result = finetuned_summarize(doc[<span class="string">"text"</span>])
+    
+    results.append({
+        <span class="string">"rag_bleu"</span>: calculate_bleu(rag_result, doc[<span class="string">"reference"</span>]),
+        <span class="string">"ft_bleu"</span>: calculate_bleu(ft_result, doc[<span class="string">"reference"</span>]),
+        <span class="string">"rag_latency"</span>: rag_time,
+        <span class="string">"ft_latency"</span>: ft_time
+    })
+
+print(f<span class="string">"RAG Avg BLEU: {avg(r['rag_bleu'] for r in results):.2f}"</span>)
+print(f<span class="string">"Fine-tuned Avg BLEU: {avg(r['ft_bleu'] for r in results):.2f}"</span>)</div>
+    <div class="notebook-cell output">Comparison Results:
+┌─────────────┬──────────┬──────────┬─────────┐
+│ Approach    │ BLEU     │ Latency  │ Cost    │
+├─────────────┼──────────┼──────────┼─────────┤
+│ RAG         │ 0.72     │ 1.8s     │ $0.002  │
+│ Fine-tuned  │ 0.85     │ 0.9s     │ $0.001  │
+│ Hybrid      │ 0.88     │ 1.2s     │ $0.002  │
+└─────────────┴──────────┴──────────┴─────────┘
+
+Recommendation: Use Fine-tuned for consistent format,
+add RAG when document references are needed.</div>
+
+    <div class="tip-box">
+        <span class="icon">🎯</span>
+        <div>
+            <strong>Exercise:</strong> Implement a hybrid approach that uses fine-tuned model for extraction and RAG for policy compliance checking.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 18: Day 3 Summary -->
+<div class="slide">
+    <h1>📋 Day 3 Summary: Design & Optimization Complete</h1>
+    <p class="subtitle">Key Concepts for Production-Ready Banking Agents</p>
+
+    <div class="grid-2">
+        <div class="card green">
+            <h4>🏗️ Module 10: Design Patterns</h4>
+            <ul>
+                <li>Layered architecture (planning, reasoning, tools)</li>
+                <li>Failure handling with fallbacks</li>
+                <li>Azure Functions for serverless tools</li>
+            </ul>
+        </div>
+        <div class="card blue">
+            <h4>📊 Module 11-12: Data & Models</h4>
+            <ul>
+                <li>Data cleaning and preprocessing</li>
+                <li>Synthetic data generation</li>
+                <li>Model selection trade-offs</li>
+                <li>Knowledge distillation</li>
+            </ul>
+        </div>
+        <div class="card purple">
+            <h4>🎓 Module 13: Fine-Tuning</h4>
+            <ul>
+                <li>LoRA and QLoRA techniques</li>
+                <li>Azure OpenAI fine-tuning workflow</li>
+                <li>JSON output fine-tuning</li>
+                <li>Evaluation metrics</li>
+            </ul>
+        </div>
+        <div class="card orange">
+            <h4>⚖️ Module 14: RAG vs Fine-Tuning</h4>
+            <ul>
+                <li>Decision framework</li>
+                <li>Use case mapping</li>
+                <li>Hybrid approaches</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px; background: #f0f8ff;">
+        <h4>📓 Day 3 Notebooks Completed</h4>
+        <table style="margin: 10px 0;">
+            <tr><th>Notebook</th><th>Module</th><th>Topic</th></tr>
+            <tr><td><code>10_agent_design_patterns.ipynb</code></td><td>10</td><td>Robust Tool-Using Agent</td></tr>
+            <tr><td><code>11_data_processing.ipynb</code></td><td>11</td><td>Data Cleaning & Synthetic Generation</td></tr>
+            <tr><td><code>12_model_selection.ipynb</code></td><td>12</td><td>Model Evaluation & Selection</td></tr>
+            <tr><td><code>13_fine_tuning.ipynb</code></td><td>13</td><td>Azure OpenAI Fine-Tuning</td></tr>
+            <tr><td><code>14_rag_vs_finetuning.ipynb</code></td><td>14</td><td>RAG vs Fine-Tuning Comparison</td></tr>
+        </table>
+    </div>
+
+    <div style="text-align: center; margin-top: 25px; padding: 25px; background: linear-gradient(135deg, #107c10, #0d5c0d); border-radius: 12px; color: white;">
+        <h2 style="color: white; border: none;">🎉 Workshop Series Complete!</h2>
+        <p style="font-size: 1.1em;">You've mastered AI Agent Architectures for Banking on Azure</p>
+    </div>
+
+    <div class="grid-3" style="margin-top: 20px;">
+        <div style="text-align: center;">
+            <div style="font-size: 2em;">📚</div>
+            <strong>Resources</strong><br>
+            <small><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/fine-tuning" target="_blank">Fine-Tuning Guide</a></small>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 2em;">💻</div>
+            <strong>Code Samples</strong><br>
+            <small><a href="https://github.com/Azure-Samples/azure-openai-samples" target="_blank">GitHub Repository</a></small>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 2em;">🎓</div>
+            <strong>Certification</strong><br>
+            <small><a href="https://learn.microsoft.com/credentials/certifications/azure-ai-engineer/" target="_blank">AI-102 Certification</a></small>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
