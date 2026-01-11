@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking AI Assignment - Day 2 (Jan 11th)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, #2d1b69 0%, #5b21b6 50%, #7c3aed 100%);
+            border-radius: 20px;
+            position: relative;
+        }
+        .header h1 { font-size: 2.5rem; margin-bottom: 15px; color: white; }
+        .header p { font-size: 1.2rem; color: rgba(255,255,255,0.9); max-width: 900px; margin: 0 auto; }
+        .header-badges { margin-top: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .header-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* Scenario Brief */
+        .scenario-brief {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%);
+            border: 2px solid #7c3aed;
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 40px;
+        }
+        .scenario-brief h2 {
+            color: #c4b5fd;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .scenario-brief h2::before { content: "🏛️"; font-size: 2rem; }
+        
+        .brief-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-top: 25px; }
+        .brief-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 25px;
+            border-left: 4px solid #7c3aed;
+        }
+        .brief-section h4 {
+            color: #c4b5fd;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+        .brief-list { list-style: none; margin: 0; padding: 0; }
+        .brief-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .brief-list li:last-child { border-bottom: none; }
+        .brief-list li strong { color: #c4b5fd; }
+        
+        /* Section Cards */
+        .section { 
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); 
+            border-radius: 20px; 
+            margin-bottom: 30px; 
+            overflow: hidden;
+            border: 1px solid rgba(124,58,237,0.3);
+        }
+        .section-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+            background: rgba(124,58,237,0.1);
+        }
+        .section-header:hover { background: rgba(124,58,237,0.2); }
+        .section-header h3 { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            font-size: 1.4rem;
+            color: #c4b5fd;
+        }
+        .section-points { 
+            background: rgba(196,181,253,0.1); 
+            color: #c4b5fd; 
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .section-content { 
+            padding: 0 30px 30px; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+        }
+        
+        /* Requirements Grid */
+        .requirements-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            gap: 25px; 
+            margin: 25px 0; 
+        }
+        .requirement-card { 
+            background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%); 
+            border-radius: 16px; 
+            padding: 25px; 
+            border-left: 4px solid #7c3aed; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .requirement-card h4 {
+            color: #c4b5fd;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .requirement-card ul { margin-left: 20px; line-height: 1.8; }
+        .requirement-card li { margin-bottom: 8px; }
+        
+        /* Tables */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 20px 0; 
+            font-size: 0.95rem; 
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        th, td { 
+            padding: 15px; 
+            text-align: left; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+        }
+        th { 
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); 
+            color: #c4b5fd; 
+            font-weight: 600;
+        }
+        tr:hover td { background: rgba(255,255,255,0.03); }
+        
+        /* Code Snippet */
+        .code-snippet { 
+            background: #1e1e1e; 
+            color: #d4d4d4; 
+            padding: 20px; 
+            border-radius: 12px; 
+            font-family: 'Consolas', monospace; 
+            font-size: 0.9em; 
+            overflow-x: auto; 
+            margin: 20px 0; 
+            border-left: 4px solid #7c3aed;
+        }
+        
+        /* Architecture Diagram */
+        .architecture-diagram { 
+            background: linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(91,33,182,0.05) 100%); 
+            padding: 30px; 
+            border-radius: 16px; 
+            text-align: center; 
+            margin: 25px 0; 
+            border: 2px dashed #7c3aed; 
+        }
+        .architecture-diagram h4 { color: #c4b5fd; margin-bottom: 20px; font-size: 1.3rem; }
+        
+        /* Warning and Success Boxes */
+        .warning-box { 
+            background: linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(220,38,38,0.05) 100%); 
+            border: 1px solid rgba(239,68,68,0.3); 
+            padding: 20px; 
+            border-radius: 12px; 
+            margin: 20px 0; 
+        }
+        .warning-box::before { 
+            content: "⚠️ "; 
+            font-weight: bold; 
+            color: #ef4444; 
+        }
+        
+        .success-box { 
+            background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.05) 100%); 
+            border: 1px solid rgba(16,185,129,0.3); 
+            padding: 20px; 
+            border-radius: 12px; 
+            margin: 20px 0; 
+        }
+        .success-box::before { 
+            content: "✅ "; 
+            font-weight: bold; 
+            color: #10b981; 
+        }
+        
+        /* Hint Box */
+        .hint-box { 
+            background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(37,99,235,0.05) 100%); 
+            border: 1px solid rgba(59,130,246,0.3); 
+            padding: 20px; 
+            border-radius: 12px; 
+            margin: 20px 0; 
+        }
+        .hint-box::before { 
+            content: "💡 "; 
+            font-weight: bold; 
+            color: #3b82f6; 
+        }
+        .hint-box h5 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        /* Badges */
+        .badge { 
+            display: inline-block; 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            font-size: 0.8em; 
+            font-weight: bold; 
+            margin: 3px; 
+        }
+        .badge.critical { background: #ef4444; color: white; }
+        .badge.important { background: #f59e0b; color: white; }
+        .badge.optional { background: #3b82f6; color: white; }
+        .badge.banking { background: #7c3aed; color: white; }
+        
+        /* Deliverable Lists */
+        .deliverable-list { 
+            background: linear-gradient(135deg, rgba(196,181,253,0.1) 0%, rgba(124,58,237,0.05) 100%); 
+            padding: 25px; 
+            border-radius: 12px; 
+            margin: 20px 0; 
+            border-left: 4px solid #c4b5fd;
+        }
+        .deliverable-list h4 { 
+            color: #c4b5fd; 
+            margin-bottom: 15px; 
+            font-size: 1.1rem;
+        }
+        .deliverable-list ul { 
+            margin-left: 20px; 
+            line-height: 1.8; 
+        }
+        .deliverable-list li { margin-bottom: 8px; }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .brief-grid { grid-template-columns: 1fr; }
+            .requirements-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏛️ Banking AI Assignment - Day 2</h1>
+            <p>Multi-Agent Orchestration, RAG Systems & Model Fine-tuning</p>
+            <div class="header-badges">
+                <span class="header-badge">📅 January 11th, 2025</span>
+                <span class="header-badge">🤝 Multi-Agent Systems</span>
+                <span class="header-badge">🔍 RAG & Fine-tuning</span>
+                <span class="header-badge">⏱️ 4 Hours</span>
+            </div>
+        </div>
+
+        <!-- Scenario Brief -->
+        <div class="scenario-brief">
+            <h2>Scenario: MetroBank - Commercial Loan Risk Assessment System</h2>
+            <p style="margin-bottom: 25px; color: #ccc; font-size: 1.1rem;">📖 You are the Senior AI Architect at MetroBank, building an advanced multi-agent system for commercial loan risk assessment with intelligent knowledge retrieval and model optimization.</p>
+            
+            <div class="brief-grid">
+                <div class="brief-section">
+                    <h4>🏛️ Organization Profile</h4>
+                    <ul class="brief-list">
+                        <li><strong>Name:</strong> MetroBank - Commercial Banking Division</li>
+                        <li><strong>Size:</strong> $45 billion in assets, 150 commercial banking centers</li>
+                        <li><strong>Focus:</strong> Commercial loans $1M - $50M for businesses</li>
+                        <li><strong>Staff:</strong> 320 commercial loan officers, 85 senior underwriters</li>
+                        <li><strong>Loan Volume:</strong> 800 commercial applications/month</li>
+                        <li><strong>Average Loan:</strong> $8.5M (range: $1M - $50M)</li>
+                        <li><strong>Portfolio:</strong> $12 billion in outstanding commercial loans</li>
+                    </ul>
+                </div>
+                
+                <div class="brief-section">
+                    <h4>😰 Complex Challenges</h4>
+                    <ul class="brief-list">
+                        <li><strong>Risk Assessment Time:</strong> 2-3 weeks per application (target: 3-5 days)</li>
+                        <li><strong>Knowledge Fragmentation:</strong> Risk policies scattered across 50+ documents</li>
+                        <li><strong>Inconsistent Decisions:</strong> 25% variance in risk scores between underwriters</li>
+                        <li><strong>Regulatory Complexity:</strong> Must comply with 15+ federal and state regulations</li>
+                        <li><strong>Market Volatility:</strong> Risk models need frequent updates for economic changes</li>
+                        <li><strong>Cost per Assessment:</strong> $12,000 (target: $3,500)</li>
+                    </ul>
+                </div>
+                
+                <div class="brief-section">
+                    <h4>📊 Complex Data Ecosystem</h4>
+                    <ul class="brief-list">
+                        <li><strong>Financial Statements:</strong> 3 years of audited financials, cash flow statements</li>
+                        <li><strong>Business Documents:</strong> Business plans, market analysis, management bios</li>
+                        <li><strong>Collateral Information:</strong> Property appraisals, equipment valuations</li>
+                        <li><strong>Industry Data:</strong> Market reports, competitor analysis, economic indicators</li>
+                        <li><strong>Regulatory Reports:</strong> Compliance documents, environmental assessments</li>
+                        <li><strong>Volume:</strong> 100-200 documents per application, 1,000+ pages total</li>
+                    </ul>
+                </div>
+                
+                <div class="brief-section">
+                    <h4>🎯 Advanced Success Metrics</h4>
+                    <ul class="brief-list">
+                        <li><strong>Processing Time:</strong> Reduce to 3-5 days from 2-3 weeks</li>
+                        <li><strong>Risk Accuracy:</strong> 95%+ prediction accuracy for loan defaults</li>
+                        <li><strong>Consistency:</strong> <5% variance in risk scores between assessments</li>
+                        <li><strong>Knowledge Retrieval:</strong> 90%+ relevant information retrieval accuracy</li>
+                        <li><strong>Model Performance:</strong> Continuous learning with <2% monthly drift</li>
+                        <li><strong>ROI:</strong> 300% return within 12 months</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignment Overview -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>📋</span> Day 2 Assignment Overview</h3>
+                <span class="section-points">50 Points Total</span>
+            </div>
+            <div class="section-content">
+                <p style="font-size: 1.1rem; margin-bottom: 20px; line-height: 1.8;">Build an advanced multi-agent orchestration system with sophisticated RAG capabilities and fine-tuned models. Focus on collaborative agent patterns, adaptive knowledge retrieval, and model optimization for commercial loan risk assessment.</p>
+                
+                <div class="hint-box">
+                    <h5>Advanced Design Principles:</h5>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>Enterprise Complexity:</strong> Design for commercial loans ($1M-$50M) with complex risk assessment requirements</li>
+                        <li><strong>Multi-Agent Coordination:</strong> Plan how different specialist agents will collaborate and resolve conflicts</li>
+                        <li><strong>Knowledge Integration:</strong> Design RAG systems that can handle regulatory changes and market volatility</li>
+                        <li><strong>Model Optimization:</strong> Balance between fine-tuning costs and RAG flexibility based on task requirements</li>
+                        <li><strong>Production Readiness:</strong> Consider scalability, monitoring, and continuous improvement in your designs</li>
+                    </ul>
+                </div>
+                
+                <table style="margin-top: 25px;">
+                    <tr>
+                        <th>Component</th>
+                        <th>Focus Area</th>
+                        <th>Points</th>
+                        <th>Time Allocation</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Multi-Agent Orchestration</strong></td>
+                        <td>Sequential, Supervisor, Reflection patterns with workflow orchestration</td>
+                        <td>20 points</td>
+                        <td>120 minutes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RAG & Knowledge Systems</strong></td>
+                        <td>Adaptive RAG with banking knowledge base and semantic search</td>
+                        <td>20 points</td>
+                        <td>120 minutes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Model Fine-tuning</strong></td>
+                        <td>LoRA/QLoRA fine-tuning with evaluation and RAG vs fine-tuning analysis</td>
+                        <td>10 points</td>
+                        <td>80 minutes</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Part 1: Multi-Agent Orchestration -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>🤝</span> Part 1: Multi-Agent Orchestration Patterns</h3>
+                <span class="section-points">20 Points</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 20px;">Implement three multi-agent orchestration patterns for commercial loan processing. Each pattern should demonstrate different coordination strategies and decision-making approaches.</p>
+                
+                <div class="requirements-grid">
+                    <div class="requirement-card">
+                        <h4>🔄 Sequential Pattern - New Business Onboarding</h4>
+                        <ul>
+                            <li><strong>Use Case:</strong> Onboarding new commercial banking relationship</li>
+                            <li><strong>Agent Chain:</strong> Document Collector → KYC Validator → Credit Analyzer → Risk Assessor → Relationship Manager</li>
+                            <li><strong>State Management:</strong> Persistent workflow state with Azure Durable Functions</li>
+                            <li><strong>Error Handling:</strong> Retry logic with exponential backoff and circuit breakers</li>
+                            <li><strong>Progress Tracking:</strong> Real-time status updates for loan officers</li>
+                            <li><strong>Implementation:</strong> Azure Logic Apps with conditional branching and state persistence</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>👥 Supervisor Pattern - Risk Assessment Team</h4>
+                        <ul>
+                            <li><strong>Use Case:</strong> Comprehensive risk assessment with specialist agents</li>
+                            <li><strong>Supervisor:</strong> Senior Risk Agent coordinates Financial, Market, and Compliance analysts</li>
+                            <li><strong>Specialist Agents:</strong> Financial Analysis, Market Risk, Regulatory Compliance, Industry Expert</li>
+                            <li><strong>Decision Aggregation:</strong> Weighted scoring based on agent expertise and confidence</li>
+                            <li><strong>Conflict Resolution:</strong> Supervisor mediates disagreements between specialists</li>
+                            <li><strong>Implementation:</strong> Azure Service Bus with message routing and aggregation patterns</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>🤔 Reflection Pattern - Loan Committee Simulation</h4>
+                        <ul>
+                            <li><strong>Use Case:</strong> Simulating loan committee deliberation process</li>
+                            <li><strong>Participants:</strong> Credit Officer, Risk Manager, Industry Specialist, Compliance Officer</li>
+                            <li><strong>Iterative Process:</strong> Multiple rounds of analysis, critique, and refinement</li>
+                            <li><strong>Consensus Building:</strong> Agents debate and refine risk assessment until consensus</li>
+                            <li><strong>Decision Quality:</strong> Higher accuracy through collaborative reasoning</li>
+                            <li><strong>Implementation:</strong> Custom orchestration with feedback loops and voting mechanisms</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="architecture-diagram">
+                    <h4>🤝 Supervisor Pattern Architecture</h4>
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: #ccc;">
+                        <strong>Loan Application Input:</strong> Commercial loan request → 
+                        <strong>Supervisor Agent:</strong> Analyzes complexity and delegates tasks → 
+                        <strong>Parallel Delegation:</strong> Financial Agent + Market Agent + Compliance Agent + Industry Agent → 
+                        <strong>Result Aggregation:</strong> Supervisor collects and weighs specialist assessments → 
+                        <strong>Conflict Detection:</strong> Identify disagreements between specialists → 
+                        <strong>Resolution Process:</strong> Focused analysis and re-assessment → 
+                        <strong>Final Decision:</strong> Weighted consensus with confidence scoring
+                    </p>
+                </div>
+
+                <div class="deliverable-list">
+                    <h4>Part 1 Deliverables:</h4>
+                    <ul>
+                        <li><strong>Sequential Pattern Design:</strong> Complete workflow architecture with state management design</li>
+                        <li><strong>Supervisor Pattern Design:</strong> Multi-agent coordination architecture with conflict resolution framework</li>
+                        <li><strong>Reflection Pattern Design:</strong> Iterative consensus-building system architecture</li>
+                        <li><strong>Orchestration Framework Design:</strong> Azure-based workflow management system architecture</li>
+                        <li><strong>Performance Analysis Design:</strong> Framework for comparing pattern effectiveness and accuracy</li>
+                    </ul>
+                </div>
+
+                <div class="hint-box">
+                    <h5>Design Hints for Multi-Agent Orchestration:</h5>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>Sequential Pattern:</strong> Design linear workflows with checkpoints, state persistence, and error recovery mechanisms</li>
+                        <li><strong>Supervisor Pattern:</strong> Create hierarchical coordination with weighted decision making and conflict resolution</li>
+                        <li><strong>Reflection Pattern:</strong> Design iterative feedback loops with consensus algorithms and quality improvement cycles</li>
+                        <li><strong>Azure Services:</strong> Use Logic Apps for workflows, Service Bus for messaging, Durable Functions for state</li>
+                        <li><strong>Performance Monitoring:</strong> Design metrics for coordination efficiency, decision accuracy, and processing time</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Part 2: RAG & Knowledge Systems -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>🔍</span> Part 2: Adaptive RAG & Knowledge Management</h3>
+                <span class="section-points">20 Points</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 20px;">Build a sophisticated RAG system that adapts retrieval strategies based on query complexity and context. Implement comprehensive knowledge management for commercial banking regulations, risk policies, and market intelligence.</p>
+                
+                <div class="requirements-grid">
+                    <div class="requirement-card">
+                        <h4>🏦 Commercial Banking Knowledge Base</h4>
+                        <ul>
+                            <li><strong>Regulatory Documents:</strong> Federal banking regulations, state commercial lending laws</li>
+                            <li><strong>Risk Policies:</strong> Internal underwriting guidelines, risk assessment frameworks</li>
+                            <li><strong>Market Intelligence:</strong> Industry reports, economic indicators, sector analysis</li>
+                            <li><strong>Historical Data:</strong> Past loan performance, default patterns, recovery rates</li>
+                            <li><strong>Best Practices:</strong> Successful loan structures, risk mitigation strategies</li>
+                            <li><strong>Real-time Updates:</strong> Market data feeds, regulatory changes, economic indicators</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>🔄 Adaptive RAG Implementation</h4>
+                        <ul>
+                            <li><strong>Query Classification:</strong> Automatically categorize queries (regulatory, risk, market, historical)</li>
+                            <li><strong>Strategy Selection:</strong> Choose retrieval approach based on query type and complexity</li>
+                            <li><strong>Multi-Modal Retrieval:</strong> Vector similarity, keyword matching, graph traversal</li>
+                            <li><strong>Context-Aware Chunking:</strong> Dynamic chunk sizes based on document type and query</li>
+                            <li><strong>Relevance Re-ranking:</strong> Custom scoring considering recency, authority, and context</li>
+                            <li><strong>Fallback Mechanisms:</strong> Multiple retrieval strategies with confidence thresholds</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>📊 Advanced Vector Database</h4>
+                        <ul>
+                            <li><strong>Multi-Index Architecture:</strong> Separate indices for regulations, policies, market data</li>
+                            <li><strong>Embedding Strategy:</strong> text-embedding-3-large with domain-specific fine-tuning</li>
+                            <li><strong>Metadata Schema:</strong> Document type, authority level, effective date, jurisdiction, industry</li>
+                            <li><strong>Hybrid Search:</strong> Combine vector similarity with traditional search and filters</li>
+                            <li><strong>Performance Optimization:</strong> Sub-100ms retrieval for 95th percentile queries</li>
+                            <li><strong>Update Pipeline:</strong> Real-time ingestion with change detection and versioning</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>🎯 RAG Evaluation & Optimization</h4>
+                        <ul>
+                            <li><strong>Retrieval Metrics:</strong> Precision@K, Recall@K, MRR, NDCG for ranking quality</li>
+                            <li><strong>Generation Quality:</strong> BLEU, ROUGE, BERTScore, domain-specific accuracy</li>
+                            <li><strong>End-to-End Evaluation:</strong> Answer correctness, citation quality, user satisfaction</li>
+                            <li><strong>A/B Testing:</strong> Compare retrieval strategies in production environment</li>
+                            <li><strong>Continuous Learning:</strong> Feedback loops to improve retrieval and generation</li>
+                            <li><strong>Expert Validation:</strong> Human expert review of complex regulatory interpretations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="architecture-diagram">
+                    <h4>🔍 Adaptive RAG System Design</h4>
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: #ccc;">
+                        <strong>Query Input:</strong> Commercial loan question → 
+                        <strong>Query Classifier:</strong> Determine query type and complexity → 
+                        <strong>Strategy Selector:</strong> Choose optimal retrieval approach → 
+                        <strong>Multi-Index Search:</strong> Parallel search across specialized indices → 
+                        <strong>Re-ranking Engine:</strong> Context-aware relevance scoring → 
+                        <strong>Generation Layer:</strong> GPT-4o with retrieved context → 
+                        <strong>Citation Engine:</strong> Proper attribution and source tracking → 
+                        <strong>Quality Validator:</strong> Confidence scoring and fact-checking
+                    </p>
+                </div>
+
+                <div class="deliverable-list">
+                    <h4>Part 2 Deliverables:</h4>
+                    <ul>
+                        <li><strong>Knowledge Base Design:</strong> Comprehensive commercial banking knowledge repository architecture</li>
+                        <li><strong>Adaptive RAG System Design:</strong> Context-aware retrieval architecture with multiple strategies</li>
+                        <li><strong>Vector Database Design:</strong> Multi-index architecture with hybrid search capabilities</li>
+                        <li><strong>Evaluation Framework Design:</strong> Comprehensive metrics and A/B testing system architecture</li>
+                        <li><strong>Performance Analysis Design:</strong> Framework for measuring retrieval accuracy and response quality</li>
+                    </ul>
+                </div>
+
+                <div class="hint-box">
+                    <h5>Design Hints for RAG & Knowledge Systems:</h5>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>Knowledge Organization:</strong> Design separate indices for regulations, policies, market data, and historical cases</li>
+                        <li><strong>Adaptive Retrieval:</strong> Create query classification to select optimal search strategies (vector, keyword, hybrid)</li>
+                        <li><strong>Context Awareness:</strong> Design retrieval that considers loan type, amount, industry, and jurisdiction</li>
+                        <li><strong>Quality Metrics:</strong> Plan evaluation using Precision@K, Recall@K, and domain-specific accuracy measures</li>
+                        <li><strong>Real-time Updates:</strong> Design pipelines for ingesting regulatory changes and market data updates</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 3: Model Fine-tuning -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>🎯</span> Part 3: Model Fine-tuning & Optimization</h3>
+                <span class="section-points">10 Points</span>
+            </div>
+            <div class="section-content">
+                <p style="margin-bottom: 20px;">Implement parameter-efficient fine-tuning for commercial loan risk assessment. Compare fine-tuning approaches with RAG systems and develop a decision framework for optimal model selection.</p>
+                
+                <div class="requirements-grid">
+                    <div class="requirement-card">
+                        <h4>🔧 LoRA Fine-tuning Implementation</h4>
+                        <ul>
+                            <li><strong>Base Model:</strong> GPT-4o-mini for cost-effective fine-tuning</li>
+                            <li><strong>Task:</strong> Commercial loan risk classification and scoring</li>
+                            <li><strong>Dataset:</strong> 5,000+ historical loan applications with outcomes</li>
+                            <li><strong>LoRA Configuration:</strong> Rank=16, Alpha=32, target modules=attention layers</li>
+                            <li><strong>Training Strategy:</strong> Gradient accumulation, learning rate scheduling</li>
+                            <li><strong>Evaluation:</strong> Hold-out test set with business metrics</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>📊 Model Evaluation Framework</h4>
+                        <ul>
+                            <li><strong>Classification Metrics:</strong> Precision, Recall, F1-score for risk categories</li>
+                            <li><strong>Regression Metrics:</strong> MAE, RMSE for risk score prediction</li>
+                            <li><strong>Business Metrics:</strong> Default prediction accuracy, false positive rate</li>
+                            <li><strong>Fairness Metrics:</strong> Bias detection across industry sectors and loan sizes</li>
+                            <li><strong>Efficiency Metrics:</strong> Inference latency, cost per prediction</li>
+                            <li><strong>Robustness Testing:</strong> Performance on out-of-distribution data</li>
+                        </ul>
+                    </div>
+
+                    <div class="requirement-card">
+                        <h4>⚖️ RAG vs Fine-tuning Decision Framework</h4>
+                        <ul>
+                            <li><strong>Use Fine-tuning When:</strong> Consistent output format, domain-specific terminology, speed critical</li>
+                            <li><strong>Use RAG When:</strong> Information changes frequently, need citations, broad knowledge required</li>
+                            <li><strong>Hybrid Approach:</strong> Fine-tuned models with RAG for knowledge augmentation</li>
+                            <li><strong>Decision Criteria:</strong> Update frequency, explainability needs, performance requirements</li>
+                            <li><strong>Cost Analysis:</strong> Training costs vs inference costs vs maintenance overhead</li>
+                            <li><strong>Implementation:</strong> A/B testing framework to validate approach selection</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <table style="margin-top: 25px;">
+                    <tr>
+                        <th>Task</th>
+                        <th>Recommended Approach</th>
+                        <th>Rationale</th>
+                        <th>Expected Performance</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Risk Score Prediction</strong></td>
+                        <td>Fine-tuned GPT-4o-mini</td>
+                        <td>Consistent numerical output, historical patterns</td>
+                        <td>RMSE < 0.15, 95% within ±0.5 points</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Regulatory Compliance</strong></td>
+                        <td>RAG with GPT-4o</td>
+                        <td>Regulations change frequently, need citations</td>
+                        <td>99%+ regulatory accuracy with sources</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Industry Analysis</strong></td>
+                        <td>Hybrid (Fine-tuned + RAG)</td>
+                        <td>Domain knowledge + current market data</td>
+                        <td>90%+ accuracy with real-time insights</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Document Summarization</strong></td>
+                        <td>Fine-tuned GPT-4o</td>
+                        <td>Consistent format, banking terminology</td>
+                        <td>ROUGE-L > 0.85, human rating > 4.5/5</td>
+                    </tr>
+                </table>
+
+                <div class="deliverable-list">
+                    <h4>Part 3 Deliverables:</h4>
+                    <ul>
+                        <li><strong>Fine-tuning Architecture:</strong> LoRA-adapted model design for risk assessment tasks</li>
+                        <li><strong>Training Pipeline Design:</strong> Automated fine-tuning workflow architecture with evaluation framework</li>
+                        <li><strong>Comparison Study Design:</strong> Framework for RAG vs Fine-tuning performance analysis</li>
+                        <li><strong>Decision Framework:</strong> Structured guidelines for choosing optimal approach</li>
+                        <li><strong>Cost-Benefit Analysis:</strong> Economic comparison framework for different approaches</li>
+                    </ul>
+                </div>
+
+                <div class="hint-box">
+                    <h5>Design Hints for Model Fine-tuning:</h5>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>LoRA Configuration:</strong> Design parameter-efficient fine-tuning with appropriate rank and alpha values</li>
+                        <li><strong>Task-Specific Models:</strong> Consider different models for classification, regression, and text generation tasks</li>
+                        <li><strong>Evaluation Metrics:</strong> Design comprehensive evaluation including accuracy, fairness, and business metrics</li>
+                        <li><strong>RAG vs Fine-tuning:</strong> Create decision criteria based on update frequency, explainability, and cost</li>
+                        <li><strong>Hybrid Approaches:</strong> Design systems that combine fine-tuned models with RAG for optimal performance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluation Criteria -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>📊</span> Day 2 Evaluation Criteria</h3>
+                <span class="section-points">50 Points Total</span>
+            </div>
+            <div class="section-content">
+                <table style="margin-top: 20px;">
+                    <tr>
+                        <th>Component</th>
+                        <th>Points</th>
+                        <th>Evaluation Criteria</th>
+                        <th>Success Metrics</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Multi-Agent Orchestration</strong></td>
+                        <td>20</td>
+                        <td>Pattern design quality, coordination architecture, error handling design</td>
+                        <td>All 3 patterns designed, robust state management architecture, conflict resolution framework</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RAG & Knowledge Systems</strong></td>
+                        <td>20</td>
+                        <td>Adaptive retrieval design, knowledge base architecture, evaluation framework</td>
+                        <td>Multi-strategy retrieval design, comprehensive knowledge architecture, evaluation framework</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Model Fine-tuning</strong></td>
+                        <td>10</td>
+                        <td>Fine-tuning architecture, evaluation design, decision framework quality</td>
+                        <td>Complete fine-tuning design, comprehensive evaluation framework, clear decision criteria</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Submission Requirements -->
+        <div class="section">
+            <div class="section-header">
+                <h3><span>📝</span> Day 2 Submission Requirements</h3>
+                <span class="section-points">Due: Jan 11th, 6 PM</span>
+            </div>
+            <div class="section-content">
+                <div class="deliverable-list">
+                    <h4>Required Deliverables:</h4>
+                    <ul>
+                        <li><strong>Technical Documentation:</strong> Complete system architecture with orchestration patterns, RAG design, and fine-tuning approach (PDF, 12-15 pages)</li>
+                        <li><strong>Architecture Diagrams:</strong> Comprehensive visual representations of all system components and interactions (Visio, Lucidchart, or similar)</li>
+                        <li><strong>Design Presentation:</strong> 12-minute presentation demonstrating multi-agent coordination, RAG system, and model selection framework (PowerPoint + video)</li>
+                        <li><strong>System Integration Design:</strong> Detailed analysis of how all components work together as a cohesive system (PDF, 5-8 pages)</li>
+                        <li><strong>Knowledge Base Design:</strong> Sample commercial banking knowledge repository architecture with search strategy design</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <strong>Integration Requirement:</strong> All components must be designed to work together as a cohesive system. Demonstrate how multi-agent orchestration uses RAG for knowledge retrieval and fine-tuned models for specialized tasks through architectural design.
+                </div>
+
+                <div class="hint-box">
+                    <h5>System Integration Design Tips:</h5>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li><strong>Data Flow:</strong> Design clear data flow between orchestration, RAG, and fine-tuned model components</li>
+                        <li><strong>API Design:</strong> Plan consistent APIs between agents, knowledge systems, and models</li>
+                        <li><strong>Error Propagation:</strong> Design how errors in one component affect others and recovery strategies</li>
+                        <li><strong>Performance Optimization:</strong> Consider caching, parallel processing, and resource sharing across components</li>
+                        <li><strong>Monitoring Integration:</strong> Design unified monitoring and logging across all system components</li>
+                    </ul>
+                </div>
+
+                <div class="success-box">
+                    <strong>Bonus Points (5 points):</strong> Design a real-time model drift detection and automatic retraining architecture based on performance degradation patterns.
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Message -->
+        <div style="text-align: center; margin-top: 50px; padding: 40px; background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); border-radius: 20px;">
+            <h2 style="color: #c4b5fd; margin-bottom: 20px; font-size: 2rem;">🚀 Day 2 Advanced Challenge</h2>
+            <p style="font-size: 1.2rem; margin: 20px 0; color: #e8e8e8; line-height: 1.8;">
+                Build a production-ready multi-agent system that demonstrates the full power of collaborative AI. Your orchestration patterns, adaptive RAG system, and fine-tuned models will showcase enterprise-grade AI architecture.
+            </p>
+            <div style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px;">
+                <p style="color: #ccc; margin-top: 10px;">This completes the comprehensive banking AI agent architecture series</p>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
